@@ -31,7 +31,7 @@ const loaiColor = {
   phukien: 'bg-purple-100 text-purple-700',
 }
 
-const emptyForm = { ten: '', mo_ta: '', loai: 'gong', gia: '', so_luong_ton: '' }
+const emptyForm = { ten: '', mo_ta: '', loai: 'gong', gia: '', gia_cu: '', so_luong_ton: '' }
 
 export default function AdminSanPhamPage() {
   const [products, setProducts] = useState([])
@@ -39,6 +39,7 @@ export default function AdminSanPhamPage() {
   const [page, setPage] = useState(1)
   const [totalPages, setTotalPages] = useState(1)
   const [search, setSearch] = useState('')
+  const [loaiFilter, setLoaiFilter] = useState('') // '' = tất cả
 
   const [showModal, setShowModal] = useState(false)
   const [editingId, setEditingId] = useState(null)
@@ -52,7 +53,7 @@ export default function AdminSanPhamPage() {
 
   const fetchProducts = () => {
     setLoading(true)
-    listSanPham({ page, limit: LIMIT, search })
+    listSanPham({ page, limit: LIMIT, search, loai: loaiFilter || undefined })
       .then(res => {
         setProducts(res.data.data.items)
         setTotalPages(res.data.data.phan_trang.tong_so_trang)
@@ -60,8 +61,8 @@ export default function AdminSanPhamPage() {
       .finally(() => setLoading(false))
   }
 
-  useEffect(() => { fetchProducts() }, [page, search])
-  useEffect(() => { setPage(1) }, [search])
+  useEffect(() => { fetchProducts() }, [page, search, loaiFilter])
+  useEffect(() => { setPage(1) }, [search, loaiFilter])
 
   const openCreate = () => {
     setEditingId(null)
@@ -84,6 +85,7 @@ export default function AdminSanPhamPage() {
       mo_ta: p.mo_ta || '',
       loai: p.loai,
       gia: String(p.gia),
+      gia_cu: p.gia_cu ? String(p.gia_cu) : '',
       so_luong_ton: String(p.so_luong_ton),
     })
     setExistingImages(p.hinh_anh || [])
@@ -113,6 +115,8 @@ export default function AdminSanPhamPage() {
       fd.append('mo_ta', moTaSach)
       fd.append('loai', form.loai)
       fd.append('gia', form.gia)
+      // Để trống nghĩa là không sale (backend sẽ lưu NULL, không hiện badge Sale%)
+      fd.append('gia_cu', form.gia_cu)
       fd.append('so_luong_ton', form.so_luong_ton)
       // PHP chỉ nhận đúng thành mảng $_FILES khi tên field có "[]"
       newFiles.forEach(file => fd.append('hinh_anh[]', file))
@@ -155,7 +159,7 @@ export default function AdminSanPhamPage() {
       </div>
 
       <div className="bg-white rounded-2xl border border-gray-100 shadow-sm overflow-hidden">
-        <div className="p-4 border-b border-gray-100">
+        <div className="p-4 border-b border-gray-100 flex flex-wrap items-center gap-3">
           <input
             type="text"
             placeholder="Tìm kiếm sản phẩm..."
@@ -163,6 +167,22 @@ export default function AdminSanPhamPage() {
             onChange={e => setSearch(e.target.value)}
             className="w-full max-w-xs border border-gray-200 rounded-xl px-4 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
           />
+
+          <div className="flex flex-wrap gap-2">
+            {[{ value: '', label: 'Tất cả' }, ...loaiOptions].map(o => (
+              <button
+                key={o.value}
+                onClick={() => setLoaiFilter(o.value)}
+                className={`px-3 py-1.5 rounded-lg text-xs font-medium border transition ${
+                  loaiFilter === o.value
+                    ? 'bg-blue-600 border-blue-600 text-white'
+                    : 'bg-white border-gray-200 text-gray-600 hover:bg-gray-50'
+                }`}
+              >
+                {o.label}
+              </button>
+            ))}
+          </div>
         </div>
 
         {loading ? (
@@ -199,7 +219,19 @@ export default function AdminSanPhamPage() {
                       {loaiOptions.find(o => o.value === p.loai)?.label}
                     </span>
                   </td>
-                  <td className="px-5 py-3.5 text-right font-medium">{Number(p.gia).toLocaleString('vi-VN')}₫</td>
+                  <td className="px-5 py-3.5 text-right font-medium">
+                    {Number(p.gia).toLocaleString('vi-VN')}₫
+                    {p.gia_cu && Number(p.gia_cu) > Number(p.gia) && (
+                      <div className="flex items-center justify-end gap-1.5 mt-0.5">
+                        <span className="text-xs text-gray-400 line-through font-normal">
+                          {Number(p.gia_cu).toLocaleString('vi-VN')}₫
+                        </span>
+                        <span className="text-xs bg-red-100 text-red-600 font-semibold px-1.5 py-0.5 rounded">
+                          -{Math.round(((Number(p.gia_cu) - Number(p.gia)) / Number(p.gia_cu)) * 100)}%
+                        </span>
+                      </div>
+                    )}
+                  </td>
                   <td className="px-5 py-3.5 text-right">
                     <span className={p.so_luong_ton === 0 ? 'text-red-500 font-medium' : 'text-gray-700'}>
                       {p.so_luong_ton}
@@ -271,7 +303,7 @@ export default function AdminSanPhamPage() {
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label className="text-sm text-gray-600 mb-1 block">Giá (₫)</label>
+                  <label className="text-sm text-gray-600 mb-1 block">Giá bán (₫)</label>
                   <input
                     type="number"
                     value={form.gia}
@@ -290,6 +322,29 @@ export default function AdminSanPhamPage() {
                     className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
                   />
                 </div>
+              </div>
+
+              <div>
+                <label className="text-sm text-gray-600 mb-1 block">
+                  Giá cũ (₫) <span className="text-gray-400 font-normal">— để trống nếu không giảm giá</span>
+                </label>
+                <input
+                  type="number"
+                  value={form.gia_cu}
+                  onChange={e => setForm(p => ({ ...p, gia_cu: e.target.value }))}
+                  placeholder="Ví dụ: 500000"
+                  className="w-full border border-gray-200 rounded-xl px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-blue-300"
+                />
+                {form.gia_cu !== '' && Number(form.gia_cu) > Number(form.gia || 0) && (
+                  <p className="text-xs text-red-500 mt-1 font-medium">
+                    Sẽ hiện badge -{Math.round(((Number(form.gia_cu) - Number(form.gia)) / Number(form.gia_cu)) * 100)}% trên trang chủ
+                  </p>
+                )}
+                {form.gia_cu !== '' && Number(form.gia_cu) <= Number(form.gia || 0) && (
+                  <p className="text-xs text-amber-500 mt-1">
+                    Giá cũ phải lớn hơn giá bán thì mới hiện badge Sale%
+                  </p>
+                )}
               </div>
 
               {/* Ảnh đã có sẵn (chỉ hiện khi sửa sản phẩm) */}

@@ -4,7 +4,7 @@ import { listDonHang } from '../api/donHang'
 import { useAuth } from '../context/AuthContext'
 
 const trangThaiLabel = {
-  cho_thanh_toan: { label: 'Chờ thanh toán', color: 'bg-yellow-100 text-yellow-700' },
+  cho_thanh_toan: { label: 'Chờ xác nhận', color: 'bg-blue-100 text-blue-700' },
   cho_xac_nhan: { label: 'Chờ xác nhận', color: 'bg-blue-100 text-blue-700' },
   dang_xu_ly: { label: 'Đang xử lý', color: 'bg-indigo-100 text-indigo-700' },
   dang_giao: { label: 'Đang giao', color: 'bg-purple-100 text-purple-700' },

@@ -1,6 +1,8 @@
 Set-StrictMode -Version Latest
 $ErrorActionPreference = 'Stop'
 # .\start.ps1
+# docker compose down
+# docker compose up -d
 $projectRoot = Split-Path -Parent $MyInvocation.MyCommand.Path
 $frontendPath = Join-Path $projectRoot 'frontend'
 $backendPath = Join-Path $projectRoot 'php-backend'

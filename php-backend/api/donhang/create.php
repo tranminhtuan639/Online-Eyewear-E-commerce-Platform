@@ -90,7 +90,9 @@ try {
     $stmt->execute([
         'id'           => $donHangId,
         'nguoidung_id' => $currentUser['id'],
-        'trang_thai'   => 'cho_thanh_toan',
+        // Web chỉ hỗ trợ thanh toán khi nhận hàng (COD) nên không có bước "chờ thanh toán" thật sự.
+        // Đơn mới tạo vào thẳng "cho_xac_nhan" (shop tra cứu thông tin người đặt rồi mới chuyển sang xử lý).
+        'trang_thai'   => 'cho_xac_nhan',
         'tong_tien'    => $tongTien,
         'ho_ten'       => $hoTenNguoiNhan,
         'sdt'          => $soDienThoai,
@@ -117,7 +119,7 @@ try {
     Response::success('Đặt hàng thành công', [
         'id' => $donHangId,
         'tong_tien' => $tongTien,
-        'trang_thai' => 'cho_thanh_toan',
+        'trang_thai' => 'cho_xac_nhan',
     ], 201);
 } catch (Exception $e) {
     $pdo->rollBack();

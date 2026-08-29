@@ -24,6 +24,8 @@ $trangThaiMoi = $input['trang_thai'] ?? '';
 // Không cho phép nhảy cóc (vd: đang "cho_xac_nhan" mà nhảy thẳng lên "hoan_thanh").
 // Các bước liên quan tới hoàn trả có endpoint riêng (yeu-cau-hoan-tra, duyet-hoan-tra, tu-choi-hoan-tra)
 // vì cần thêm dữ liệu (lý do, thông tin ngân hàng) nên không xử lý ở đây.
+// "cho_thanh_toan" từ nay chỉ còn ý nghĩa lịch sử (đơn cũ tạo trước khi đổi luồng sang thẳng
+// "cho_xac_nhan" trong create.php) — giữ lại mapping để những đơn cũ dở dang vẫn chuyển được bình thường.
 $luongHopLe = [
     'cho_thanh_toan'     => ['cho_xac_nhan', 'da_huy'],
     'cho_xac_nhan'       => ['dang_xu_ly', 'da_huy'],

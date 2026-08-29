@@ -34,6 +34,7 @@ if (!$stmt->fetch()) {
 $ten        = trim($_POST['ten'] ?? '');
 $loai       = $_POST['loai'] ?? '';
 $gia        = $_POST['gia'] ?? '';
+$giaCu      = trim($_POST['gia_cu'] ?? '');
 $soLuongTon = $_POST['so_luong_ton'] ?? null;
 $moTa       = Sanitize::cleanHtml($_POST['mo_ta'] ?? null);
 
@@ -50,17 +51,27 @@ if (!is_numeric($soLuongTon) || (int)$soLuongTon < 0) {
     Response::error('Số lượng tồn không hợp lệ');
 }
 
+// gia_cu: để trống ('') nghĩa là XOÁ sale (không hiện badge Sale% nữa).
+if ($giaCu !== '' && (!is_numeric($giaCu) || (float)$giaCu < 0)) {
+    Response::error('Giá cũ không hợp lệ');
+}
+$giaCuValue = $giaCu === '' ? null : $giaCu;
+
 $pdo->beginTransaction();
 $newlySaved = [];
 
 try {
     $stmt = $pdo->prepare(
-        'UPDATE sanpham SET ten = :ten, loai = :loai, gia = :gia, so_luong_ton = :so_luong_ton, mo_ta = :mo_ta WHERE id = :id'
+        'UPDATE sanpham
+         SET ten = :ten, loai = :loai, gia = :gia, gia_cu = :gia_cu,
+             so_luong_ton = :so_luong_ton, mo_ta = :mo_ta
+         WHERE id = :id'
     );
     $stmt->execute([
         'ten'          => $ten,
         'loai'         => $loai,
         'gia'          => $gia,
+        'gia_cu'       => $giaCuValue,
         'so_luong_ton' => $soLuongTon,
         'mo_ta'        => $moTa,
         'id'           => $id,

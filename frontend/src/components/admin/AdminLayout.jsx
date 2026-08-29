@@ -1,4 +1,5 @@
-import { NavLink, useNavigate } from 'react-router-dom'
+import { useState, useEffect } from 'react'
+import { NavLink, useNavigate, useLocation } from 'react-router-dom'
 import { useAuth } from '../../context/AuthContext'
 
 const navItems = [
@@ -12,6 +13,25 @@ const navItems = [
 export default function AdminLayout({ children }) {
   const { user, logout } = useAuth()
   const navigate = useNavigate()
+  const location = useLocation()
+  const [sidebarOpen, setSidebarOpen] = useState(false)
+
+  // Đóng sidebar khi đổi route (mobile)
+  useEffect(() => {
+    setSidebarOpen(false)
+  }, [location.pathname])
+
+  // Khóa scroll body khi mở sidebar mobile
+  useEffect(() => {
+    if (sidebarOpen) {
+      document.body.style.overflow = 'hidden'
+    } else {
+      document.body.style.overflow = ''
+    }
+    return () => {
+      document.body.style.overflow = ''
+    }
+  }, [sidebarOpen])
 
   const handleLogout = async () => {
     await logout()
@@ -19,14 +39,42 @@ export default function AdminLayout({ children }) {
   }
 
   return (
-    <div className="min-h-screen flex bg-gray-100">
-      <aside className="w-56 bg-gray-900 text-white flex flex-col fixed h-full">
-        <div className="px-5 py-5 border-b border-gray-700">
-          <p className="text-lg font-bold text-white">👓 BánKính</p>
-          <p className="text-xs text-gray-400 mt-0.5">Quản trị viên</p>
-        </div>
+    <div className="admin-layout min-h-screen flex bg-gray-100">
+      {/* Overlay mobile */}
+      {sidebarOpen && (
+        <div
+          className="admin-sidebar-overlay"
+          onClick={() => setSidebarOpen(false)}
+          aria-hidden="true"
+        />
+      )}
 
-        <nav className="flex-1 px-3 py-4 flex flex-col gap-1">
+      {/* Sidebar */}
+      <aside
+        className={`admin-sidebar bg-gray-900 text-white flex flex-col fixed h-full z-40 ${
+          sidebarOpen ? 'admin-sidebar--open' : ''
+        }`}
+      >
+        <div className="px-5 py-5 border-b border-gray-700 flex items-center justify-between">
+  <div>
+    <img
+      src="/logo.jpg"
+      alt="BánKính"
+      className="h-7 w-auto"
+    />
+    <p className="text-xs text-gray-400 mt-1">Quản trị viên</p>
+  </div>
+  <button
+    type="button"
+    className="admin-sidebar-close"
+    onClick={() => setSidebarOpen(false)}
+    aria-label="Đóng menu"
+  >
+    ✕
+  </button>
+</div>
+
+        <nav className="flex-1 px-3 py-4 flex flex-col gap-1 overflow-y-auto">
           {navItems.map(item => (
             <NavLink
               key={item.to}
@@ -58,19 +106,34 @@ export default function AdminLayout({ children }) {
         </div>
       </aside>
 
-      <div className="ml-56 flex-1 flex flex-col min-h-screen">
-        <header className="bg-white border-b border-gray-200 px-6 py-3 flex items-center justify-between">
-          <p className="text-sm text-gray-500">
-            Xin chào, <span className="font-semibold text-gray-800">{user?.ho_ten}</span>
-          </p>
+      {/* Main area */}
+      <div className="admin-main flex-1 flex flex-col min-h-screen min-w-0">
+        <header className="admin-header bg-white border-b border-gray-200 px-4 sm:px-6 py-3 flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3 min-w-0">
+            <button
+              type="button"
+              className="admin-menu-btn"
+              onClick={() => setSidebarOpen(true)}
+              aria-label="Mở menu"
+            >
+              <span className="admin-menu-icon">☰</span>
+            </button>
+            <p className="text-sm text-gray-500 truncate">
+              Xin chào,{' '}
+              <span className="font-semibold text-gray-800">{user?.ho_ten}</span>
+            </p>
+          </div>
+
           <button
+            type="button"
             onClick={() => navigate('/')}
-            className="text-sm text-blue-600 hover:underline"
+            className="admin-back-btn"
           >
             ← Về trang khách hàng
           </button>
         </header>
-        <main className="flex-1 p-6">
+
+        <main className="admin-content flex-1 p-4 sm:p-6 overflow-x-auto">
           {children}
         </main>
       </div>

@@ -17,6 +17,15 @@ export const updateProfile = (ho_ten) => api.put('/nguoidung/profile.php', { ho_
 export const doiMatKhau = (mat_khau_cu, mat_khau_moi) =>
   api.post('/nguoidung/doi-mat-khau.php', { mat_khau_cu, mat_khau_moi })
 
+// file: đối tượng File (input type="file", không multiple — 1 người chỉ có 1 avatar)
+export const uploadAvatar = (file) => {
+  const fd = new FormData()
+  fd.append('anh_dai_dien', file)
+  return api.post('/nguoidung/upload-avatar.php', fd, {
+    headers: { 'Content-Type': 'multipart/form-data' },
+  })
+}
+
 // ----- Admin quản lý user -----
 export const listNguoiDung = (params = {}) =>
   api.get('/nguoidung/list.php', { params })

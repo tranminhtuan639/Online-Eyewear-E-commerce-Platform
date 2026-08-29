@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom'
 import { getDonHangById, huyDonHang, yeuCauHoanTra } from '../api/donHang'
 
 const trangThaiLabel = {
-  cho_thanh_toan:       { label: 'Chờ thanh toán',    color: 'bg-yellow-100 text-yellow-700' },
+  cho_thanh_toan:       { label: 'Chờ xác nhận',       color: 'bg-blue-100 text-blue-700' },
   cho_xac_nhan:         { label: 'Chờ xác nhận',      color: 'bg-blue-100 text-blue-700' },
   dang_xu_ly:           { label: 'Đang xử lý',          color: 'bg-indigo-100 text-indigo-700' },
   dang_giao:            { label: 'Đang giao',            color: 'bg-purple-100 text-purple-700' },
@@ -16,6 +16,9 @@ const trangThaiLabel = {
   da_tra_hang_hoan_tien:{ label: 'Đã hoàn tiền',         color: 'bg-teal-100 text-teal-700' },
 }
 
+// Đơn mới tạo giờ vào thẳng "cho_xac_nhan" (web chỉ có COD, không có bước chờ thanh toán thật sự).
+// "cho_thanh_toan" chỉ còn có thể gặp ở đơn cũ tạo trước khi đổi luồng - normalize về cùng bước 1
+// bên dưới (xem currentStep) để thanh tiến trình không bị lệch với các đơn đó.
 const steps = ['cho_xac_nhan', 'dang_xu_ly', 'dang_giao', 'hoan_thanh']
 const stepLabels = ['Xác nhận', 'Xử lý', 'Đang giao', 'Hoàn thành']
 
@@ -80,7 +83,9 @@ export default function OrderDetailPage() {
   if (!order) return null
 
   const tt = trangThaiLabel[order.trang_thai] || { label: order.trang_thai, color: 'bg-gray-100 text-gray-700' }
-  const currentStep = steps.indexOf(order.trang_thai)
+  // Đơn cũ còn ở "cho_thanh_toan" coi như đang ở bước 1 (chờ xác nhận), giống đơn mới.
+  const buocTrangThai = order.trang_thai === 'cho_thanh_toan' ? 'cho_xac_nhan' : order.trang_thai
+  const currentStep = steps.indexOf(buocTrangThai)
   const showSteps = !['da_huy', 'yeu_cau_hoan_tra', 'cho_duyet_tra_hang', 'dang_hoan_hang', 'da_tra_hang_hoan_tien', 'tu_choi_hoan_tra'].includes(order.trang_thai)
 
   return (

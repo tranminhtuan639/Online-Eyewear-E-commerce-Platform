@@ -9,7 +9,9 @@ import api from './axios'
  */
 export const createDonHang = (data) => api.post('/donhang/create.php', data)
 
-// params: { page, limit, trang_thai, nguoidung_id (chỉ admin dùng được) }
+// params: { page, limit, trang_thai, nguoidung_id, xem_tat_ca }
+// Mặc định (không có xem_tat_ca) luôn chỉ trả đơn của người đang đăng nhập, kể cả quản lý.
+// Chỉ khi gửi xem_tat_ca: 1 (và đúng là quanly) mới xem được toàn bộ đơn hàng hệ thống.
 export const listDonHang = (params = {}) =>
   api.get('/donhang/list.php', { params })
 

@@ -17,17 +17,26 @@ export default function AdminDashboard() {
     Promise.all([
       listSanPham({ limit: 1 }),        // chỉ cần lấy tong_so_dong, không cần data thật
       listNguoiDung({ limit: 1 }),
-      listDonHang({ limit: 1000 }),      // chưa có API thống kê riêng, tạm lấy hết đơn để tính doanh thu ở client
+      // xem_tat_ca: 1 để lấy đơn của TẤT CẢ khách hàng (không có cờ này API chỉ trả đơn của chính quản lý).
+      // chưa có API thống kê riêng, tạm lấy hết đơn để tính doanh thu/đếm đơn ở client.
+      listDonHang({ limit: 1000, xem_tat_ca: 1 }),
     ]).then(([spRes, ndRes, dhRes]) => {
       const donHangs = dhRes.data.data.items
+
+      // Tổng doanh thu từ trước đến giờ: cộng dồn tất cả đơn đã hoàn thành.
       const doanhThu = donHangs
         .filter(d => d.trang_thai === 'hoan_thanh')
         .reduce((sum, d) => sum + Number(d.tong_tien), 0)
 
+      // Tổng đơn hàng: tính mọi trạng thái, trừ "chờ xác nhận" (cho_thanh_toan / cho_xac_nhan) và "đã hủy" (da_huy).
+      const tongDonHang = donHangs.filter(
+        d => !['cho_thanh_toan', 'cho_xac_nhan', 'da_huy'].includes(d.trang_thai)
+      ).length
+
       setStats({
         tongSanPham: spRes.data.data.phan_trang.tong_so_dong,
         tongNguoiDung: ndRes.data.data.phan_trang.tong_so_dong,
-        tongDonHang: dhRes.data.data.phan_trang.tong_so_dong,
+        tongDonHang,
         doanhThu,
       })
     }).finally(() => setLoading(false))
@@ -35,10 +44,10 @@ export default function AdminDashboard() {
 
   const cards = [
     { label: 'Sản phẩm', value: stats.tongSanPham, icon: '👓', color: 'bg-blue-50 text-blue-600' },
-    { label: 'Đơn hàng', value: stats.tongDonHang, icon: '📦', color: 'bg-purple-50 text-purple-600' },
+    { label: 'Tổng đơn hàng', value: stats.tongDonHang, icon: '📦', color: 'bg-purple-50 text-purple-600' },
     { label: 'Người dùng', value: stats.tongNguoiDung, icon: '👤', color: 'bg-green-50 text-green-600' },
     {
-      label: 'Doanh thu',
+      label: 'Tổng doanh thu',
       value: stats.doanhThu.toLocaleString('vi-VN') + '₫',
       icon: '💰',
       color: 'bg-yellow-50 text-yellow-600',

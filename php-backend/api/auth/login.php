@@ -22,7 +22,7 @@ if ($email === '' || $matKhau === '') {
 
 $pdo = getDbConnection();
 $stmt = $pdo->prepare(
-    'SELECT id, email, mat_khau_hash, ho_ten, vai_tro FROM nguoidung WHERE email = :email'
+    'SELECT id, email, mat_khau_hash, ho_ten, vai_tro, anh_dai_dien FROM nguoidung WHERE email = :email'
 );
 $stmt->execute(['email' => $email]);
 $row = $stmt->fetch();
@@ -34,10 +34,11 @@ if (!$row || !password_verify($matKhau, $row['mat_khau_hash'])) {
 }
 
 $user = [
-    'id'      => $row['id'],
-    'email'   => $row['email'],
-    'ho_ten'  => $row['ho_ten'],
-    'vai_tro' => $row['vai_tro'],
+    'id'           => $row['id'],
+    'email'        => $row['email'],
+    'ho_ten'       => $row['ho_ten'],
+    'vai_tro'      => $row['vai_tro'],
+    'anh_dai_dien' => $row['anh_dai_dien'],
 ];
 
 Auth::login($user);

@@ -56,10 +56,14 @@ $stmt->execute([
 ]);
 
 $user = [
-    'id'      => $id,
-    'email'   => $email,
-    'ho_ten'  => $hoTen,
-    'vai_tro' => 'khachhang',
+    'id'           => $id,
+    'email'        => $email,
+    'ho_ten'       => $hoTen,
+    'vai_tro'      => 'khachhang',
+    // Người mới đăng ký chưa có avatar; thêm field null ở đây để shape của $user
+    // (lưu vào session, trả về client) luôn giống nhau dù đăng nhập hay đăng ký,
+    // tránh frontend phải xử lý field bị thiếu tùy trường hợp.
+    'anh_dai_dien' => null,
 ];
 
 // Tự đăng nhập luôn sau khi đăng ký thành công

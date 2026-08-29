@@ -12,12 +12,17 @@ import OrderDetailPage from './pages/OrderDetailPage'
 import LoginPage from './pages/LoginPage'
 import RegisterPage from './pages/RegisterPage'
 import ProfilePage from './pages/ProfilePage'
+import YeuThichPage from './pages/YeuThichPage'
 import AdminDashboard from './pages/admin/AdminDashboard'
 import AdminSanPhamPage from './pages/admin/AdminSanPhamPage'
 import AdminDonHangPage from './pages/admin/AdminDonHangPage'
 import AdminKhachHangPage from './pages/admin/AdminKhachHangPage'
 import AdminDoanhThuPage from './pages/admin/AdminDoanhThuPage'
-
+import ChinhSachBaoHanhPage from './pages/ChinhSachBaoHanhPage'
+import ChinhSachVanChuyenPage from './pages/ChinhSachVanChuyenPage'
+import ChinhSachThanhToanPage from './pages/ChinhSachThanhToanPage'
+import ChinhSachBaoMatPage from './pages/ChinhSachBaoMatPage'
+import DoMatTuVanPage from './pages/DoMatTuVanPage'
 function App() {
   return (
     <AuthProvider>
@@ -47,6 +52,12 @@ function App() {
                     <Route path="/don-hang" element={<OrdersPage />} />
                     <Route path="/don-hang/:id" element={<OrderDetailPage />} />
                     <Route path="/tai-khoan" element={<ProfilePage />} />
+                    <Route path="/yeu-thich" element={<YeuThichPage />} />
+                    <Route path="/chinh-sach-bao-hanh" element={<ChinhSachBaoHanhPage />} />
+                    <Route path="/chinh-sach-van-chuyen" element={<ChinhSachVanChuyenPage />} />
+                    <Route path="/chinh-sach-thanh-toan" element={<ChinhSachThanhToanPage />} />
+                    <Route path="/chinh-sach-bao-mat" element={<ChinhSachBaoMatPage />} />
+                    <Route path="/do-mat-tu-van" element={<DoMatTuVanPage />} />
                   </Routes>
                 </main>
               </>

@@ -21,7 +21,12 @@ $offset = ($page - 1) * $limit;
 $conditions = [];
 $params = [];
 
-if ($currentUser['vai_tro'] === 'quanly') {
+// Trang /admin/don-hang phải chủ động gửi xem_tat_ca=1 mới được xem toàn bộ đơn hàng hệ thống.
+// Nếu không có cờ này (vd: quản lý tự vào /don-hang xem đơn của chính mình),
+// dù là vai trò quanly cũng CHỈ thấy đơn của bản thân — tránh lộ đơn của người khác.
+$xemTatCa = ($_GET['xem_tat_ca'] ?? '') === '1';
+
+if ($currentUser['vai_tro'] === 'quanly' && $xemTatCa) {
     // Admin có thể lọc theo trạng thái và/hoặc theo 1 khách hàng cụ thể
     $trangThai = $_GET['trang_thai'] ?? '';
     if ($trangThai !== '') {
@@ -34,7 +39,8 @@ if ($currentUser['vai_tro'] === 'quanly') {
         $params['nguoidung_id'] = $nguoidungId;
     }
 } else {
-    // Khách hàng chỉ xem được đơn của chính mình (thay thế RLS đã bỏ)
+    // Mặc định: chỉ xem được đơn của chính mình (thay thế RLS đã bỏ).
+    // Áp dụng cho MỌI vai trò, kể cả quanly, khi không có cờ xem_tat_ca.
     $conditions[] = 'nguoidung_id = :nguoidung_id';
     $params['nguoidung_id'] = $currentUser['id'];
 

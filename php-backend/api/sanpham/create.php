@@ -21,6 +21,7 @@ Auth::requireRole(['quanly']);
 $ten         = trim($_POST['ten'] ?? '');
 $loai        = $_POST['loai'] ?? '';
 $gia         = $_POST['gia'] ?? '';
+$giaCu       = trim($_POST['gia_cu'] ?? '');
 $soLuongTon  = $_POST['so_luong_ton'] ?? 0;
 $moTa        = Sanitize::cleanHtml($_POST['mo_ta'] ?? null);
 
@@ -37,19 +38,29 @@ if (!is_numeric($soLuongTon) || (int)$soLuongTon < 0) {
     Response::error('Số lượng tồn không hợp lệ');
 }
 
+// gia_cu là tuỳ chọn: để trống nghĩa là không có giảm giá (không hiện badge Sale%).
+// Nếu có nhập, phải là số hợp lệ và lớn hơn giá bán hiện tại thì mới có ý nghĩa giảm giá,
+// nhưng vẫn cho lưu nếu <= giá (chỉ đơn giản là sẽ không hiện badge Sale% ở frontend).
+if ($giaCu !== '' && (!is_numeric($giaCu) || (float)$giaCu < 0)) {
+    Response::error('Giá cũ không hợp lệ');
+}
+$giaCuValue = $giaCu === '' ? null : $giaCu;
+
 $pdo = getDbConnection();
 $pdo->beginTransaction();
 
 try {
     $id = Uuid::v4();
     $stmt = $pdo->prepare(
-        'INSERT INTO sanpham (id, ten, loai, gia, so_luong_ton, mo_ta) VALUES (:id, :ten, :loai, :gia, :so_luong_ton, :mo_ta)'
+        'INSERT INTO sanpham (id, ten, loai, gia, gia_cu, so_luong_ton, mo_ta)
+         VALUES (:id, :ten, :loai, :gia, :gia_cu, :so_luong_ton, :mo_ta)'
     );
     $stmt->execute([
         'id'           => $id,
         'ten'          => $ten,
         'loai'         => $loai,
         'gia'          => $gia,
+        'gia_cu'       => $giaCuValue,
         'so_luong_ton' => $soLuongTon,
         'mo_ta'        => $moTa,
     ]);
@@ -90,6 +101,7 @@ try {
         'ten' => $ten,
         'loai' => $loai,
         'gia' => $gia,
+        'gia_cu' => $giaCuValue,
         'so_luong_ton' => $soLuongTon,
         'hinh_anh' => $savedPaths,
     ], 201);

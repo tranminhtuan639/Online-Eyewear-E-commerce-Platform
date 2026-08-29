@@ -12,7 +12,7 @@ $pdo = getDbConnection();
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     $stmt = $pdo->prepare(
-        'SELECT id, email, ho_ten, vai_tro, tao_luc FROM nguoidung WHERE id = :id'
+        'SELECT id, email, ho_ten, vai_tro, anh_dai_dien, tao_luc FROM nguoidung WHERE id = :id'
     );
     $stmt->execute(['id' => $currentUser['id']]);
     Response::success('OK', $stmt->fetch());

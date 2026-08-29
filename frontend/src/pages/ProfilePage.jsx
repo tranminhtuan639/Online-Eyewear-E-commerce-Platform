@@ -1,7 +1,8 @@
-import { useState, useEffect } from 'react'
+import { useState, useEffect, useRef } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
-import { getProfile, updateProfile, doiMatKhau } from '../api/nguoiDung'
+import { getProfile, updateProfile, doiMatKhau, uploadAvatar } from '../api/nguoiDung'
+import { getImageUrl } from '../api/axios'
 
 export default function ProfilePage() {
   const { user, loading: authLoading, refreshUser } = useAuth()
@@ -11,6 +12,13 @@ export default function ProfilePage() {
   const [success, setSuccess] = useState(false)
   const [error, setError] = useState('')
   const [form, setForm] = useState({ ho_ten: '', email: '' })
+
+  // ----- Avatar -----
+  const fileInputRef = useRef(null)
+  const [anhDaiDien, setAnhDaiDien] = useState(null) // đường dẫn tương đối đang lưu trên server
+  const [previewUrl, setPreviewUrl] = useState(null) // xem trước ảnh mới chọn, trước khi upload xong
+  const [avatarUploading, setAvatarUploading] = useState(false)
+  const [avatarError, setAvatarError] = useState('')
 
   const [doiMkForm, setDoiMkForm] = useState({ mat_khau_cu: '', mat_khau_moi: '' })
   const [doiMkSaving, setDoiMkSaving] = useState(false)
@@ -23,10 +31,53 @@ export default function ProfilePage() {
       .then(res => {
         const data = res.data.data
         setForm({ ho_ten: data.ho_ten || '', email: data.email || '' })
+        setAnhDaiDien(data.anh_dai_dien || null)
       })
       .catch(() => setError('Không tải được thông tin tài khoản'))
       .finally(() => setLoading(false))
   }, [user])
+
+  // Dọn URL blob xem trước khi component unmount hoặc chọn ảnh khác, tránh rò rỉ bộ nhớ.
+  useEffect(() => {
+    return () => { if (previewUrl) URL.revokeObjectURL(previewUrl) }
+  }, [previewUrl])
+
+  const handleChonAnh = (e) => {
+    const file = e.target.files?.[0]
+    if (!file) return
+    setAvatarError('')
+
+    if (!['image/jpeg', 'image/png', 'image/webp'].includes(file.type)) {
+      setAvatarError('Chỉ nhận ảnh JPG, PNG hoặc WEBP')
+      e.target.value = ''
+      return
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setAvatarError('Ảnh vượt quá 5MB')
+      e.target.value = ''
+      return
+    }
+
+    if (previewUrl) URL.revokeObjectURL(previewUrl)
+    setPreviewUrl(URL.createObjectURL(file))
+    handleUploadAvatar(file)
+  }
+
+  const handleUploadAvatar = async (file) => {
+    setAvatarUploading(true)
+    setAvatarError('')
+    try {
+      const res = await uploadAvatar(file)
+      const path = res.data.data.anh_dai_dien
+      setAnhDaiDien(path)
+      refreshUser({ anh_dai_dien: path })
+    } catch (err) {
+      setAvatarError(err.response?.data?.message || 'Tải ảnh lên thất bại, thử lại')
+    } finally {
+      setAvatarUploading(false)
+      if (fileInputRef.current) fileInputRef.current.value = ''
+    }
+  }
 
   const handleChange = (e) => {
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }))
@@ -105,6 +156,39 @@ export default function ProfilePage() {
               <span className="text-xs font-medium bg-blue-100 text-blue-700 px-3 py-1 rounded-full">
                 {user.vai_tro === 'quanly' ? '🔧 Quản lý' : '🛍️ Khách hàng'}
               </span>
+            </div>
+
+            {/* Ảnh đại diện */}
+            <div className="mb-5 flex items-center gap-4">
+              <div className="w-20 h-20 rounded-full overflow-hidden bg-gray-100 flex items-center justify-center flex-shrink-0 border border-gray-200">
+                {previewUrl || anhDaiDien ? (
+                  <img
+                    src={previewUrl || getImageUrl(anhDaiDien)}
+                    alt="Ảnh đại diện"
+                    className="w-full h-full object-cover"
+                  />
+                ) : (
+                  <span className="text-2xl text-gray-300">👤</span>
+                )}
+              </div>
+              <div>
+                <input
+                  ref={fileInputRef}
+                  type="file"
+                  accept="image/jpeg,image/png,image/webp"
+                  onChange={handleChonAnh}
+                  className="hidden"
+                  id="avatar-input"
+                />
+                <label
+                  htmlFor="avatar-input"
+                  className={`text-sm font-medium border border-gray-200 px-4 py-2 rounded-xl cursor-pointer hover:bg-gray-50 transition inline-block ${avatarUploading ? 'opacity-60 pointer-events-none' : ''}`}
+                >
+                  {avatarUploading ? 'Đang tải lên...' : 'Đổi ảnh đại diện'}
+                </label>
+                <p className="text-xs text-gray-400 mt-1.5">JPG, PNG hoặc WEBP, tối đa 5MB</p>
+                {avatarError && <p className="text-xs text-red-500 mt-1">{avatarError}</p>}
+              </div>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4">

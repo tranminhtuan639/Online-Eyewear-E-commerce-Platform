@@ -27,10 +27,11 @@ class Auth
     public static function login(array $user): void
     {
         $_SESSION['user'] = [
-            'id'      => $user['id'],
-            'email'   => $user['email'],
-            'ho_ten'  => $user['ho_ten'],
-            'vai_tro' => $user['vai_tro'],
+            'id'           => $user['id'],
+            'email'        => $user['email'],
+            'ho_ten'       => $user['ho_ten'],
+            'vai_tro'      => $user['vai_tro'],
+            'anh_dai_dien' => $user['anh_dai_dien'] ?? null,
         ];
     }
 

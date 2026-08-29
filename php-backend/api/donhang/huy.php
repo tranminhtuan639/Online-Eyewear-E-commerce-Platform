@@ -28,7 +28,8 @@ if (!$donHang) {
 
 Auth::requireOwnerOrRole($donHang['nguoidung_id']);
 
-// Khách chỉ huỷ được khi đơn còn sớm (chưa xử lý/giao).
+// Khách chỉ huỷ được khi đơn còn ở "chờ xác nhận" (web chỉ có COD, chưa xử lý/giao thì huỷ tự do).
+// "cho_thanh_toan" giữ lại trong danh sách chỉ để tương thích ngược với đơn cũ tạo trước khi đổi luồng.
 // Admin (quanly) được huỷ rộng hơn, tới trước khi hàng đang giao.
 $trangThaiChoPhepHuy = $currentUser['vai_tro'] === 'quanly'
     ? ['cho_thanh_toan', 'cho_xac_nhan', 'dang_xu_ly']

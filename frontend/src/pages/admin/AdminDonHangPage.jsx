@@ -1,10 +1,13 @@
 import { useEffect, useState } from 'react'
 import AdminLayout from '../../components/admin/AdminLayout'
+import Pagination from '../../components/Pagination'
 import { listDonHang, getDonHangById, capNhatTrangThaiDonHang, duyetHoanTra, tuChoiHoanTra } from '../../api/donHang'
 import { getNguoiDungById } from '../../api/nguoiDung'
 
+const SO_DON_MOI_TRANG = 10
+
 const trangThaiOptions = [
-  { value: 'cho_thanh_toan',        label: 'Chờ thanh toán',      color: 'bg-amber-100 text-amber-700' },
+  { value: 'cho_thanh_toan',        label: 'Chờ xác nhận',       color: 'bg-blue-100 text-blue-700' },
   { value: 'cho_xac_nhan',          label: 'Chờ xác nhận',       color: 'bg-blue-100 text-blue-700' },
   { value: 'dang_xu_ly',            label: 'Đang xử lý',          color: 'bg-indigo-100 text-indigo-700' },
   { value: 'dang_giao',             label: 'Đang giao',            color: 'bg-purple-100 text-purple-700' },
@@ -18,6 +21,9 @@ const trangThaiOptions = [
 ]
 
 // Khớp đúng bản đồ $luongHopLe trong api/donhang/cap-nhat-trang-thai.php.
+// Đơn mới tạo ở trạng thái kỹ thuật "cho_thanh_toan", vẫn phải đi qua "cho_xac_nhan" trước khi
+// sang "dang_xu_ly" (backend không cho nhảy thẳng cho_thanh_toan -> dang_xu_ly).
+// Cả 2 trạng thái này hiển thị chung nhãn "Chờ xác nhận" (xem trangThaiOptions ở trên).
 // Riêng bước yeu_cau_hoan_tra -> cho_duyet_tra_hang / tu_choi_hoan_tra dùng 2 endpoint riêng (duyệt/từ chối),
 // không đi qua cap-nhat-trang-thai.php.
 const buocTiepTheo = {
@@ -39,6 +45,7 @@ export default function AdminDonHangPage() {
   const [loading, setLoading] = useState(true)
   const [filterTrangThai, setFilterTrangThai] = useState('')
   const [searchOrderCode, setSearchOrderCode] = useState('')
+  const [currentPage, setCurrentPage] = useState(1)
   const [selectedOrder, setSelectedOrder] = useState(null)
   const [khachHang, setKhachHang] = useState(null)
   const [loadingDetail, setLoadingDetail] = useState(false)
@@ -50,7 +57,9 @@ export default function AdminDonHangPage() {
   const fetchOrders = () => {
     setLoading(true)
     // Chưa có API thống kê/phân trang riêng cho trang này, tạm lấy tối đa 1000 đơn gần nhất.
-    listDonHang({ limit: 1000 })
+    // xem_tat_ca: 1 bắt buộc phải có để backend biết đây là trang quản lý,
+    // cần xem đơn của TẤT CẢ khách hàng chứ không chỉ đơn của quản lý.
+    listDonHang({ limit: 1000, xem_tat_ca: 1 })
       .then(res => setOrders(res.data.data.items))
       .finally(() => setLoading(false))
   }
@@ -127,7 +136,21 @@ export default function AdminDonHangPage() {
     const matchCode = !keyword || shortCode.includes(keyword) || fullCode.includes(keyword)
     return matchTrangThai && matchCode
   })
+  const totalPages = Math.max(1, Math.ceil(filtered.length / SO_DON_MOI_TRANG))
+  const pagedOrders = filtered.slice(
+    (currentPage - 1) * SO_DON_MOI_TRANG,
+    currentPage * SO_DON_MOI_TRANG
+  )
   const nextSteps = selectedOrder ? (buocTiepTheo[selectedOrder?.trang_thai] ?? []) : []
+
+  // Đổi filter/tìm kiếm thì quay về trang 1; nếu trang hiện tại vượt quá tổng số trang (VD sau khi lọc) thì kéo về trang cuối.
+  useEffect(() => {
+    setCurrentPage(1)
+  }, [filterTrangThai, searchOrderCode])
+
+  useEffect(() => {
+    if (currentPage > totalPages) setCurrentPage(totalPages)
+  }, [totalPages, currentPage])
 
   return (
     <AdminLayout>
@@ -151,7 +174,9 @@ export default function AdminDonHangPage() {
           className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${filterTrangThai === '' ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
           Tất cả ({orders.length})
         </button>
-        {trangThaiOptions.map(tt => (
+        {/* cho_xac_nhan bị ẩn khỏi bộ lọc nhanh vì đã gộp chung nhãn "Chờ xác nhận" với cho_thanh_toan;
+            vẫn giữ trong trangThaiOptions để badge của đơn cũ (nếu còn) hiển thị đúng nhãn/màu. */}
+        {trangThaiOptions.filter(tt => tt.value !== 'cho_xac_nhan').map(tt => (
           <button key={tt.value} onClick={() => setFilterTrangThai(tt.value)}
             className={`px-3 py-1.5 rounded-xl text-xs font-medium transition ${filterTrangThai === tt.value ? 'bg-gray-800 text-white' : 'bg-white border border-gray-200 text-gray-600 hover:bg-gray-50'}`}>
             {tt.label} ({orders.filter(o => o.trang_thai === tt.value).length})
@@ -165,7 +190,7 @@ export default function AdminDonHangPage() {
             : filtered.length === 0 ? <div className="text-center py-16 text-gray-400">Không có đơn hàng</div>
             : (
               <div className="divide-y divide-gray-50">
-                {filtered.map(order => {
+                {pagedOrders.map(order => {
                   const tt = getTrangThai(order.trang_thai)
                   const isSelected = selectedOrder?.id === order.id
                   return (
@@ -184,6 +209,11 @@ export default function AdminDonHangPage() {
                 })}
               </div>
             )}
+          <Pagination
+            currentPage={currentPage}
+            totalPages={totalPages}
+            onPageChange={setCurrentPage}
+          />
         </div>
 
         <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-5 overflow-y-auto max-h-[80vh]">

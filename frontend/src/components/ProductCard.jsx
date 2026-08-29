@@ -1,7 +1,9 @@
 import { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
+import { useAuth } from '../context/AuthContext'
 import { getImageUrl } from '../api/axios'
+import { toggleYeuThich } from '../api/yeuThich'
 
 const loaiLabel = {
   gong: 'Gọng kính',
@@ -9,66 +11,258 @@ const loaiLabel = {
   phukien: 'Phụ kiện',
 }
 
-const loaiColor = {
-  gong: 'bg-blue-100 text-blue-700',
-  trong: 'bg-green-100 text-green-700',
-  phukien: 'bg-purple-100 text-purple-700',
-}
-
-export default function ProductCard({ product }) {
+export default function ProductCard({ product, onUnfavorited }) {
   const navigate = useNavigate()
   const { addToCart } = useCart()
-  const [hovered, setHovered] = useState(false)
+  const { user } = useAuth()
 
-  const imageA = getImageUrl(product.anh_a)
-  const imageB = getImageUrl(product.anh_b)
-  const currentImage = hovered && imageB ? imageB : imageA
+  const [hovered, setHovered] =
+    useState(false)
+
+  // Khởi tạo từ dữ liệu backend trả về (da_yeu_thich, luot_yeu_thich),
+  // sau đó tự quản lý state riêng để bấm ♡ phản hồi ngay (optimistic update).
+  const [daYeuThich, setDaYeuThich] =
+    useState(Boolean(product.da_yeu_thich))
+
+  const [luotYeuThich, setLuotYeuThich] =
+    useState(Number(product.luot_yeu_thich || 0))
+
+  const [dangXuLyYeuThich, setDangXuLyYeuThich] =
+    useState(false)
+
+  const imageA =
+    getImageUrl(product.anh_a)
+
+  const imageB =
+    getImageUrl(product.anh_b)
+
+  const currentImage =
+    hovered && imageB
+      ? imageB
+      : imageA
+
+  const gia =
+    Number(product.gia || 0)
+
+  const oldPrice =
+    product.gia_cu
+      ? Number(product.gia_cu)
+      : 0
+
+  const hetHang =
+    product.so_luong_ton === 0
+
+  // Badge ưu tiên: hết hàng > badge do backend tính sẵn (sale/mới/bán chạy).
+  // Backend chỉ trả tối đa 1 badge/sản phẩm theo thứ tự Sale% > Mới > Bán chạy.
+  const badge =
+    hetHang
+      ? { loai: 'het_hang', nhan: 'Hết hàng' }
+      : product.badge || null
+
+  const handleProductClick = () => {
+    navigate(
+      `/san-pham/${product.id}`
+    )
+  }
+
+  const handleAddToCart = (event) => {
+    event.stopPropagation()
+
+    if (hetHang) {
+      return
+    }
+
+    addToCart(product)
+  }
+
+  const handleToggleFavorite = async (event) => {
+    event.stopPropagation()
+
+    // Chưa đăng nhập -> chuyển tới trang đăng nhập thay vì gọi API (sẽ bị 401)
+    if (!user) {
+      navigate('/dang-nhap')
+      return
+    }
+
+    if (dangXuLyYeuThich) {
+      return
+    }
+
+    const trangThaiTruoc = daYeuThich
+    const luotTruoc = luotYeuThich
+
+    // Cập nhật giao diện ngay (optimistic), rollback lại nếu API lỗi
+    setDaYeuThich(!trangThaiTruoc)
+    setLuotYeuThich(
+      trangThaiTruoc
+        ? Math.max(0, luotTruoc - 1)
+        : luotTruoc + 1
+    )
+    setDangXuLyYeuThich(true)
+
+    try {
+      const res = await toggleYeuThich(product.id)
+      const data = res.data?.data || {}
+
+      setDaYeuThich(Boolean(data.da_yeu_thich))
+      setLuotYeuThich(
+        typeof data.luot_yeu_thich === 'number'
+          ? data.luot_yeu_thich
+          : luotTruoc
+      )
+
+      // Vừa bỏ yêu thích -> báo lên component cha (vd: trang "Yêu thích")
+      // để ẩn thẻ sản phẩm này khỏi danh sách ngay lập tức.
+      if (!data.da_yeu_thich && onUnfavorited) {
+        onUnfavorited(product.id)
+      }
+    } catch (error) {
+      console.error(
+        'Lỗi khi cập nhật yêu thích:',
+        error
+      )
+
+      // Rollback về trạng thái trước khi bấm
+      setDaYeuThich(trangThaiTruoc)
+      setLuotYeuThich(luotTruoc)
+    } finally {
+      setDangXuLyYeuThich(false)
+    }
+  }
 
   return (
-    <div className="bg-white rounded-2xl shadow-sm border border-gray-100 hover:shadow-md transition overflow-hidden group">
+    <article className="product-card">
+
+      {/* =========================
+          IMAGE
+      ========================= */}
+
       <div
-        className="h-48 bg-gradient-to-br from-blue-50 to-indigo-100 flex items-center justify-center cursor-pointer overflow-hidden"
-        onClick={() => navigate(`/san-pham/${product.id}`)}
-        onMouseEnter={() => setHovered(true)}
-        onMouseLeave={() => setHovered(false)}
+        className="product-image-wrap"
+        onClick={handleProductClick}
+        onMouseEnter={() =>
+          setHovered(true)
+        }
+        onMouseLeave={() =>
+          setHovered(false)
+        }
       >
+
+        {/* BADGE */}
+
+        {badge && (
+          <span
+            className={
+              `product-badge badge-${badge.loai}`
+            }
+          >
+            {badge.nhan}
+          </span>
+        )}
+
+
+        {/* FAVORITE */}
+
+        <button
+          type="button"
+          className={
+            `favorite ${
+              daYeuThich ? 'active' : ''
+            }`
+          }
+          onClick={handleToggleFavorite}
+          disabled={dangXuLyYeuThich}
+          aria-label={
+            daYeuThich
+              ? 'Bỏ yêu thích'
+              : 'Yêu thích'
+          }
+        >
+          {daYeuThich ? '♥' : '♡'}
+        </button>
+
+
+        {/* PRODUCT IMAGE */}
+
         {currentImage ? (
           <img
             src={currentImage}
             alt={product.ten}
-            className="w-full h-full object-cover transition-opacity duration-300"
           />
         ) : (
-          <span className="text-6xl group-hover:scale-110 transition-transform duration-300">
-            {hovered ? '🕶️' : '👓'}
+          <span className="product-placeholder">
+            👓
           </span>
         )}
+
       </div>
 
-      <div className="p-4">
-        <span className={`text-xs font-medium px-2 py-0.5 rounded-full ${loaiColor[product.loai]}`}>
-          {loaiLabel[product.loai]}
+
+      {/* =========================
+          PRODUCT INFO
+      ========================= */}
+
+      <div className="product-info">
+
+        {/* BRAND */}
+
+        <span className="product-brand">
+          {product.thuong_hieu ||
+            loaiLabel[product.loai] ||
+            'BÁNKÍNH.VN'}
         </span>
+
+
+        {/* NAME */}
+
         <h3
-          className="mt-2 font-semibold text-gray-800 cursor-pointer hover:text-blue-600 transition line-clamp-2"
-          onClick={() => navigate(`/san-pham/${product.id}`)}
+          onClick={handleProductClick}
         >
           {product.ten}
         </h3>
-        <div className="mt-3 flex items-center justify-between">
-          <span className="text-lg font-bold text-blue-600">
-            {Number(product.gia).toLocaleString('vi-VN')}₫
-          </span>
-          <span className="text-xs text-gray-400">Còn {product.so_luong_ton}</span>
+
+
+        {/* PRICE */}
+
+        <div className="price-row">
+
+          <strong>
+            {gia.toLocaleString('vi-VN')}₫
+          </strong>
+
+          {oldPrice > gia && (
+            <del>
+              {oldPrice.toLocaleString('vi-VN')}₫
+            </del>
+          )}
+
         </div>
+
+
+        {/* LƯỢT YÊU THÍCH */}
+
+        {luotYeuThich > 0 && (
+          <span className="luot-yeu-thich">
+            ♥ {luotYeuThich} lượt thích
+          </span>
+        )}
+
+
+        {/* ADD CART */}
+
         <button
-          onClick={() => addToCart(product)}
-          disabled={product.so_luong_ton === 0}
-          className="mt-3 w-full bg-blue-600 text-white py-2 rounded-xl text-sm font-medium hover:bg-blue-700 transition disabled:bg-gray-300 disabled:cursor-not-allowed"
+          type="button"
+          className="add-cart"
+          onClick={handleAddToCart}
+          disabled={hetHang}
         >
-          {product.so_luong_ton === 0 ? 'Hết hàng' : 'Thêm vào giỏ'}
+          {hetHang
+            ? 'Hết hàng'
+            : 'Thêm vào giỏ'}
         </button>
+
       </div>
-    </div>
+
+    </article>
   )
 }
