@@ -36,10 +36,17 @@ class Cors
         header('Access-Control-Allow-Methods: GET, POST, PUT, DELETE, OPTIONS');
         header('Access-Control-Allow-Headers: Content-Type, Authorization');
 
-        // Trình duyệt gửi request OPTIONS "dò đường" (preflight) trước mỗi request
+        // FIX: Trình duyệt gửi request OPTIONS "dò đường" (preflight) trước mỗi request
         // GET/POST/PUT/DELETE thật sự khi có custom header hoặc method khác GET/POST đơn giản.
-        // Chỉ cần trả 200 rỗng ở đây, không cần chạy tiếp logic API.
+        // Đặc biệt quan trọng trên mobile: phải gửi đầy đủ header CORS kể cả cho OPTIONS request
+        // để browser đảm bảo cookie được lưu giữ đúng cách.
         if ($_SERVER['REQUEST_METHOD'] === 'OPTIONS') {
+            // Luôn trả đầy đủ CORS headers cho OPTIONS, kể cả Access-Control-Allow-Credentials
+            // Điều này đảm bảo mobile browser hiểu rằng cookie được phép gửi
+            if ($origin !== '' && in_array($origin, self::allowedOrigins(), true)) {
+                header("Access-Control-Allow-Origin: $origin");
+                header('Access-Control-Allow-Credentials: true');
+            }
             http_response_code(200);
             exit;
         }
