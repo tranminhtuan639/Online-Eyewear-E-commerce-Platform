@@ -1,0 +1,467 @@
+-- phpMyAdmin SQL Dump
+-- version 5.2.3
+-- https://www.phpmyadmin.net/
+--
+-- Máy chủ: mysql:3306
+-- Thời gian đã tạo: Th8 30, 2026 lúc 02:17 AM
+-- Phiên bản máy phục vụ: 8.4.11
+-- Phiên bản PHP: 8.3.33
+
+SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
+START TRANSACTION;
+SET time_zone = "+00:00";
+
+
+/*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
+/*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
+/*!40101 SET @OLD_COLLATION_CONNECTION=@@COLLATION_CONNECTION */;
+/*!40101 SET NAMES utf8mb4 */;
+SET FOREIGN_KEY_CHECKS = 0;
+
+--
+-- Cơ sở dữ liệu: `matkinh`
+--
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `donhang`
+--
+
+CREATE TABLE `donhang` (
+  `id` char(36) NOT NULL,
+  `nguoidung_id` char(36) NOT NULL,
+  `trang_thai` enum('cho_thanh_toan','cho_xac_nhan','dang_xu_ly','dang_giao','hoan_thanh','da_huy','yeu_cau_hoan_tra','cho_duyet_tra_hang','dang_hoan_hang','da_tra_hang_hoan_tien','tu_choi_hoan_tra') NOT NULL DEFAULT 'cho_thanh_toan',
+  `tong_tien` decimal(12,2) NOT NULL DEFAULT '0.00',
+  `ho_ten_nguoi_nhan` varchar(100) DEFAULT NULL,
+  `so_dien_thoai` varchar(20) DEFAULT NULL,
+  `dia_chi` text,
+  `ly_do_hoan_tra` text,
+  `ten_ngan_hang` varchar(100) DEFAULT NULL,
+  `so_tai_khoan` varchar(50) DEFAULT NULL,
+  `ten_chu_tai_khoan` varchar(100) DEFAULT NULL,
+  `ly_do_tu_choi` text,
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cap_nhat_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `donhang`
+--
+
+INSERT INTO `donhang` (`id`, `nguoidung_id`, `trang_thai`, `tong_tien`, `ho_ten_nguoi_nhan`, `so_dien_thoai`, `dia_chi`, `ly_do_hoan_tra`, `ten_ngan_hang`, `so_tai_khoan`, `ten_chu_tai_khoan`, `ly_do_tu_choi`, `tao_luc`, `cap_nhat_luc`) VALUES
+('04ebc767-19a3-45f8-b197-941a65829f42', '0cbd07fd-2c53-4229-ba70-de59f15ad23d', 'hoan_thanh', 760000.00, 'Nguyễn Văn Test', '0916669639', 'Braunau am Inn', NULL, NULL, NULL, NULL, NULL, '2026-08-29 03:27:19', '2026-08-29 03:27:40'),
+('5475c34b-f12c-4810-84b5-780a27c62fac', 'e608ce3b-408b-443e-99c2-ca46bc4e7bce', 'da_huy', 100000.00, 'Trần Văn Test', '0916669639', 'Braunau am Inn', NULL, NULL, NULL, NULL, NULL, '2026-08-28 08:04:30', '2026-08-28 08:05:34'),
+('7ad2442e-93f6-4b21-8ab8-f08ee203836c', '0cbd07fd-2c53-4229-ba70-de59f15ad23d', 'da_huy', 760000.00, 'Nguyễn Văn Test', '0916669639', '32 lê thị hồng', NULL, NULL, NULL, NULL, NULL, '2026-08-29 01:59:28', '2026-08-29 02:00:11'),
+('a284d2fe-8aa2-4823-8104-2e536129efe7', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', 'hoan_thanh', 100000.00, 'Adolphin Kitler', '0916669639', 'Braunau am Inn', NULL, NULL, NULL, NULL, NULL, '2026-08-28 04:43:56', '2026-08-29 01:35:33'),
+('eb02615a-5e29-4a4f-81ff-cd2744f5d30b', '0cbd07fd-2c53-4229-ba70-de59f15ad23d', 'da_huy', 4380000.00, 'Nguyễn Văn Test', '0914949672', 'Braunau am Inn', NULL, NULL, NULL, NULL, NULL, '2026-08-29 02:53:27', '2026-08-29 03:26:53');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `donhang_chitiet`
+--
+
+CREATE TABLE `donhang_chitiet` (
+  `id` char(36) NOT NULL,
+  `donhang_id` char(36) NOT NULL,
+  `sanpham_id` char(36) NOT NULL,
+  `don_kinh_id` char(36) DEFAULT NULL,
+  `so_luong` int NOT NULL,
+  `gia_ban` decimal(12,2) NOT NULL,
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `donhang_chitiet`
+--
+
+INSERT INTO `donhang_chitiet` (`id`, `donhang_id`, `sanpham_id`, `don_kinh_id`, `so_luong`, `gia_ban`, `tao_luc`) VALUES
+('214b4a88-d718-44ef-af00-69c49eb742de', 'eb02615a-5e29-4a4f-81ff-cd2744f5d30b', '9ec02930-8449-4039-8532-ff1b5929119d', NULL, 1, 4380000.00, '2026-08-29 02:53:27'),
+('389d0f65-5269-4d04-91b3-ced5cd545ace', '7ad2442e-93f6-4b21-8ab8-f08ee203836c', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', NULL, 1, 760000.00, '2026-08-29 01:59:28'),
+('475b951b-ae4a-4852-a730-f5954a974610', '04ebc767-19a3-45f8-b197-941a65829f42', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', NULL, 1, 760000.00, '2026-08-29 03:27:19'),
+('7fbb912d-280a-4611-97e2-c027f10113cc', '5475c34b-f12c-4810-84b5-780a27c62fac', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', NULL, 1, 100000.00, '2026-08-28 08:04:30'),
+('acc5476e-5db9-4700-bbbb-01f7b371a469', 'a284d2fe-8aa2-4823-8104-2e536129efe7', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', NULL, 1, 100000.00, '2026-08-28 04:43:56');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `don_kinh`
+--
+
+CREATE TABLE `don_kinh` (
+  `id` char(36) NOT NULL,
+  `nguoidung_id` char(36) NOT NULL,
+  `od_cau` decimal(5,2) DEFAULT NULL,
+  `os_cau` decimal(5,2) DEFAULT NULL,
+  `khoang_dong_tu` decimal(5,2) DEFAULT NULL,
+  `file_url` text,
+  `ghi_chu` text,
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cap_nhat_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `nguoidung`
+--
+
+CREATE TABLE `nguoidung` (
+  `id` char(36) NOT NULL,
+  `email` varchar(255) NOT NULL,
+  `mat_khau_hash` varchar(255) NOT NULL,
+  `ho_ten` varchar(100) NOT NULL,
+  `vai_tro` enum('khachhang','quanly') NOT NULL DEFAULT 'khachhang',
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cap_nhat_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `anh_dai_dien` varchar(255) DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `nguoidung`
+--
+
+INSERT INTO `nguoidung` (`id`, `email`, `mat_khau_hash`, `ho_ten`, `vai_tro`, `tao_luc`, `cap_nhat_luc`, `anh_dai_dien`) VALUES
+('0cbd07fd-2c53-4229-ba70-de59f15ad23d', 'testvannguyen234@gmail.com', '$2y$10$GiYB4YXoSPX2e6wqnFavb.hvTRupLABflGUAm6Ad7ag8l30VGXuGG', 'Nguyễn Văn Test', 'khachhang', '2026-08-28 14:56:19', '2026-08-28 14:56:19', NULL),
+('892fa58e-a29a-11f1-9ec7-2e2efdde25ec', 'admin@matkinh.com', '$2y$10$SMryl50dcM1QBYsCMrvp..mODCAtxYyCMgGv0/EwgY0gFK0Gx2wbW', 'Trần Minh Tuấn', 'quanly', '2026-08-28 04:40:03', '2026-08-29 04:24:13', 'uploads/nguoidung/nguoidung_6a925eed8c4c44.36030340.webp'),
+('9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', 'fthosejbro@gmail.com', '$2y$10$btC.L/n6xDfF9qkrHOrE0.e5ayibBfdtXW6kgu0oGVltxWua17w8C', 'Adolphin Kitler', 'khachhang', '2026-08-28 04:43:42', '2026-08-28 04:43:42', NULL),
+('e608ce3b-408b-443e-99c2-ca46bc4e7bce', 'test639@gmail.com', '$2y$10$kNSShIV1EnCEK5TO1qOUneGIqjG2W5NJVZYDuNcIspBJht3cXDaN6', 'Trần Văn Test', 'khachhang', '2026-08-28 08:04:09', '2026-08-29 04:34:01', 'uploads/nguoidung/nguoidung_6a925785165b76.55819120.jpg');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `sanpham`
+--
+
+CREATE TABLE `sanpham` (
+  `id` char(36) NOT NULL,
+  `ten` varchar(255) NOT NULL,
+  `loai` enum('gong','trong','phukien') NOT NULL,
+  `gia` decimal(12,2) NOT NULL,
+  `gia_cu` decimal(12,2) DEFAULT NULL COMMENT 'Giá gốc trước khi giảm. NULL hoặc <= gia nghĩa là không sale.',
+  `so_luong_ton` int NOT NULL DEFAULT '0',
+  `mo_ta` text,
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cap_nhat_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `sanpham`
+--
+
+INSERT INTO `sanpham` (`id`, `ten`, `loai`, `gia`, `gia_cu`, `so_luong_ton`, `mo_ta`, `tao_luc`, `cap_nhat_luc`) VALUES
+('03c18bcf-b31f-4477-ad1d-692d4ef50d65', 'Gọng kính AVERY SAMI', 'gong', 760000.00, NULL, 19, '<p class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">🌼&nbsp;Đa&nbsp;giác&nbsp;phá&nbsp;cách,&nbsp;chất&nbsp;riêng&nbsp;bứt&nbsp;phá&nbsp;🌼</strong></p><p class=\"ql-align-center\"><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;nhựa&nbsp;kết&nbsp;hợp&nbsp;kim&nbsp;loại&nbsp;form&nbsp;đa&nbsp;giác&nbsp;là&nbsp;một&nbsp;trong&nbsp;những&nbsp;xu&nbsp;hướng&nbsp;thiết&nbsp;kế&nbsp;độc&nbsp;đáo&nbsp;và&nbsp;hiện&nbsp;đại&nbsp;nhất&nbsp;hiện&nbsp;nay</span></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Chi&nbsp;tiết&nbsp;chất&nbsp;liệu&nbsp;&amp;&nbsp;cấu&nbsp;trúc:</strong></p><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Phần&nbsp;gọng&nbsp;trước&nbsp;(mặt&nbsp;kính):</span><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Chất&nbsp;liệu:&nbsp;được&nbsp;làm&nbsp;từ&nbsp;nhựa,&nbsp;giúp&nbsp;định&nbsp;hình&nbsp;rõ&nbsp;nét&nbsp;các&nbsp;góc&nbsp;cạnh&nbsp;của&nbsp;dáng&nbsp;đa&nbsp;giác.&nbsp;Chất&nbsp;liệu&nbsp;nhựa&nbsp;cho&nbsp;phép&nbsp;đa&nbsp;dạng&nbsp;về&nbsp;màu&nbsp;sắc&nbsp;và&nbsp;hoa&nbsp;văn,&nbsp;từ&nbsp;các&nbsp;tông&nbsp;màu&nbsp;trơn&nbsp;lì,&nbsp;trong&nbsp;suốt,&nbsp;bán&nbsp;trong&nbsp;suốt&nbsp;đến&nbsp;họa&nbsp;tiết&nbsp;đồi&nbsp;mồi</span></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Dáng&nbsp;đa&nbsp;giác:&nbsp;Đây&nbsp;là&nbsp;điểm&nbsp;nhấn&nbsp;chính.&nbsp;Các&nbsp;cạnh&nbsp;của&nbsp;gọng&nbsp;được&nbsp;cắt&nbsp;gọt&nbsp;tinh&nbsp;xảo,&nbsp;tạo&nbsp;nên&nbsp;các&nbsp;góc&nbsp;nhọn&nbsp;hoặc&nbsp;bo&nbsp;tròn&nbsp;nhẹ&nbsp;tùy&nbsp;theo&nbsp;từng&nbsp;thiết&nbsp;kế&nbsp;cụ&nbsp;thể.&nbsp;Dáng&nbsp;này&nbsp;phá&nbsp;vỡ&nbsp;sự&nbsp;truyền&nbsp;thống&nbsp;của&nbsp;gọng&nbsp;tròn&nbsp;hay&nbsp;vuông,&nbsp;mang&nbsp;đến&nbsp;sự&nbsp;khác&nbsp;biệt&nbsp;và&nbsp;phá&nbsp;cách.</span></li></ul></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Phần&nbsp;cầu&nbsp;kính&nbsp;và&nbsp;càng&nbsp;kính:</span><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Chất&nbsp;liệu&nbsp;kim&nbsp;loại:&nbsp;Đây&nbsp;là&nbsp;nơi&nbsp;chất&nbsp;liệu&nbsp;kim&nbsp;loại&nbsp;được&nbsp;ứng&nbsp;dụng&nbsp;để&nbsp;tạo&nbsp;sự&nbsp;thanh&nbsp;thoát&nbsp;và&nbsp;tinh&nbsp;tế.</span><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Cầu&nbsp;kính:&nbsp;là&nbsp;một&nbsp;thanh&nbsp;kim&nbsp;loại&nbsp;mảnh,&nbsp;nối&nbsp;liền&nbsp;hai&nbsp;mắt&nbsp;kính,&nbsp;tạo&nbsp;cảm&nbsp;giác&nbsp;nhẹ&nbsp;nhàng&nbsp;và&nbsp;&quot;bay&nbsp;bổng&quot;&nbsp;cho&nbsp;tổng&nbsp;thể</span></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Càng&nbsp;kính:&nbsp;Thường&nbsp;được&nbsp;làm&nbsp;bằng&nbsp;kim&nbsp;loại,&nbsp;mang&nbsp;lại&nbsp;vẻ&nbsp;thanh&nbsp;lịch&nbsp;và&nbsp;hiện&nbsp;đại.&nbsp;Càng&nbsp;kim&nbsp;loại&nbsp;có&nbsp;thể&nbsp;rất&nbsp;mảnh&nbsp;mai,&nbsp;thuôn&nbsp;dài,&nbsp;hoặc&nbsp;có&nbsp;các&nbsp;chi&nbsp;tiết&nbsp;chạm&nbsp;khắc,&nbsp;vân&nbsp;nổi&nbsp;để&nbsp;tăng&nbsp;thêm&nbsp;điểm&nbsp;nhấn.&nbsp;Phần&nbsp;đuôi&nbsp;càng&nbsp;thường&nbsp;được&nbsp;bọc&nbsp;một&nbsp;lớp&nbsp;nhựa&nbsp;hoặc&nbsp;silicone&nbsp;mềm&nbsp;mại&nbsp;để&nbsp;tạo&nbsp;sự&nbsp;thoải&nbsp;mái&nbsp;khi&nbsp;đeo.</span></li></ul></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Mối&nbsp;nối/Bản&nbsp;lề:&nbsp;Sự&nbsp;chuyển&nbsp;tiếp&nbsp;giữa&nbsp;gọng&nbsp;nhựa&nbsp;và&nbsp;càng&nbsp;kim&nbsp;loại&nbsp;được&nbsp;thiết&nbsp;kế&nbsp;rất&nbsp;tỉ&nbsp;mỉ.&nbsp;Đó&nbsp;có&nbsp;thể&nbsp;là&nbsp;một&nbsp;khớp&nbsp;nối&nbsp;ẩn&nbsp;để&nbsp;tạo&nbsp;sự&nbsp;liền&nbsp;mạch,&nbsp;hoặc&nbsp;bản&nbsp;lề&nbsp;lộ&nbsp;thiên&nbsp;với&nbsp;các&nbsp;chi&nbsp;tiết&nbsp;kim&nbsp;loại,&nbsp;đinh&nbsp;tán&nbsp;(rivets)&nbsp;nổi&nbsp;bật,&nbsp;làm&nbsp;tăng&nbsp;thêm&nbsp;vẻ&nbsp;công&nbsp;nghiệp,&nbsp;cổ&nbsp;điển&nbsp;hoặc&nbsp;sang&nbsp;trọng&nbsp;cho&nbsp;thiết&nbsp;kế</span></li></ul></li></ul><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Dưới&nbsp;đây&nbsp;là&nbsp;các&nbsp;bước&nbsp;và&nbsp;lưu&nbsp;ý&nbsp;chi&nbsp;tiết&nbsp;về&nbsp;cách&nbsp;bảo&nbsp;quản&nbsp;gọng&nbsp;kính&nbsp;nhựa&nbsp;kết&nbsp;hợp&nbsp;kim&nbsp;loại:</strong></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">1.&nbsp;Vệ&nbsp;sinh&nbsp;kính&nbsp;thường&nbsp;xuyên&nbsp;và&nbsp;đúng&nbsp;cách:</strong></p><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Sử&nbsp;dụng&nbsp;khăn&nbsp;và&nbsp;nước&nbsp;lau&nbsp;kính&nbsp;chuyên&nbsp;dụng&nbsp;được&nbsp;tặng&nbsp;kem&nbsp;khi&nbsp;lắp&nbsp;kính&nbsp;tại&nbsp;GlassyZone&nbsp;</span></li></ul><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">2.&nbsp;Tránh&nbsp;nhiệt&nbsp;độ&nbsp;cao&nbsp;và&nbsp;thay&nbsp;đổi&nbsp;nhiệt&nbsp;độ&nbsp;đột&nbsp;ngột:</strong></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tránh&nbsp;ánh&nbsp;nắng&nbsp;trực&nbsp;tiếp:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Không&nbsp;để&nbsp;kính&nbsp;trong&nbsp;xe&nbsp;hơi&nbsp;dưới&nbsp;trời&nbsp;nắng&nbsp;gắt,&nbsp;gần&nbsp;bếp,&nbsp;lò&nbsp;sưởi&nbsp;hoặc&nbsp;các&nbsp;nguồn&nbsp;nhiệt&nbsp;độ&nbsp;cao&nbsp;khác.&nbsp;Nhiệt&nbsp;độ&nbsp;cao&nbsp;có&nbsp;thể&nbsp;làm&nbsp;biến&nbsp;dạng&nbsp;gọng&nbsp;nhựa,&nbsp;bong&nbsp;tróc&nbsp;lớp&nbsp;phủ&nbsp;tròng&nbsp;kính,&nbsp;và&nbsp;ảnh&nbsp;hưởng&nbsp;đến&nbsp;độ&nbsp;bền&nbsp;của&nbsp;kim&nbsp;loại.</span></li></ul><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">3.&nbsp;Đeo&nbsp;và&nbsp;tháo&nbsp;kính&nbsp;đúng&nbsp;cách:</strong></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Dùng&nbsp;cả&nbsp;hai&nbsp;tay:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Luôn&nbsp;dùng&nbsp;cả&nbsp;hai&nbsp;tay&nbsp;để&nbsp;đeo&nbsp;và&nbsp;tháo&nbsp;kính.&nbsp;Việc&nbsp;dùng&nbsp;một&nbsp;tay&nbsp;có&nbsp;thể&nbsp;làm&nbsp;cong&nbsp;vênh&nbsp;gọng&nbsp;kính,&nbsp;lỏng&nbsp;ốc&nbsp;vít&nbsp;ở&nbsp;các&nbsp;khớp&nbsp;nối,&nbsp;đặc&nbsp;biệt&nbsp;là&nbsp;với&nbsp;gọng&nbsp;kết&nbsp;hợp&nbsp;kim&nbsp;loại.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Không&nbsp;đẩy&nbsp;kính&nbsp;lên&nbsp;đầu:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Tránh&nbsp;đẩy&nbsp;kính&nbsp;lên&nbsp;tóc&nbsp;hoặc&nbsp;đỉnh&nbsp;đầu&nbsp;vì&nbsp;điều&nbsp;này&nbsp;có&nbsp;thể&nbsp;làm&nbsp;giãn&nbsp;gọng,&nbsp;thay&nbsp;đổi&nbsp;form&nbsp;kính&nbsp;và&nbsp;làm&nbsp;lỏng&nbsp;khớp.</span></li></ul><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">4.&nbsp;Cất&nbsp;giữ&nbsp;kính&nbsp;đúng&nbsp;nơi:</strong></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Sử&nbsp;dụng&nbsp;hộp&nbsp;đựng&nbsp;kính:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Luôn&nbsp;cất&nbsp;kính&nbsp;trong&nbsp;hộp&nbsp;cứng&nbsp;khi&nbsp;không&nbsp;sử&nbsp;dụng,&nbsp;đặc&nbsp;biệt&nbsp;khi&nbsp;di&nbsp;chuyển&nbsp;hoặc&nbsp;để&nbsp;trong&nbsp;túi&nbsp;xách&nbsp;để&nbsp;tránh&nbsp;va&nbsp;đập,&nbsp;trầy&nbsp;xước&nbsp;và&nbsp;đè&nbsp;nén.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Để&nbsp;kính&nbsp;úp&nbsp;mặt&nbsp;kính&nbsp;xuống&nbsp;hoặc&nbsp;gập&nbsp;gọn:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Nếu&nbsp;không&nbsp;có&nbsp;hộp,&nbsp;hãy&nbsp;gập&nbsp;gọn&nbsp;càng&nbsp;kính&nbsp;và&nbsp;đặt&nbsp;kính&nbsp;úp&nbsp;mặt&nbsp;tròng&nbsp;kính&nbsp;xuống&nbsp;(trên&nbsp;bề&nbsp;mặt&nbsp;sạch&nbsp;và&nbsp;mềm)&nbsp;hoặc&nbsp;đặt&nbsp;ngửa&nbsp;để&nbsp;tránh&nbsp;trầy&nbsp;xước&nbsp;tròng&nbsp;kính.</span></li></ul><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">5.&nbsp;Kiểm&nbsp;tra&nbsp;và&nbsp;bảo&nbsp;dưỡng&nbsp;định&nbsp;kỳ:</strong></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Kiểm&nbsp;tra&nbsp;ốc&nbsp;vít:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Định&nbsp;kỳ&nbsp;kiểm&nbsp;tra&nbsp;các&nbsp;ốc&nbsp;vít&nbsp;ở&nbsp;khớp&nbsp;nối&nbsp;giữa&nbsp;gọng&nbsp;và&nbsp;càng&nbsp;kính.&nbsp;Nếu&nbsp;thấy&nbsp;lỏng,&nbsp;hãy&nbsp;dùng&nbsp;tua&nbsp;vít&nbsp;nhỏ&nbsp;chuyên&nbsp;dụng&nbsp;để&nbsp;siết&nbsp;lại&nbsp;nhẹ&nbsp;nhàng.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Kiểm&nbsp;tra&nbsp;đệm&nbsp;mũi:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Với&nbsp;gọng&nbsp;có&nbsp;đệm&nbsp;mũi&nbsp;rời,&nbsp;kiểm&nbsp;tra&nbsp;xem&nbsp;chúng&nbsp;có&nbsp;bị&nbsp;ố&nbsp;vàng,&nbsp;cứng&nbsp;hoặc&nbsp;lỏng&nbsp;không.&nbsp;Nếu&nbsp;có,&nbsp;nên&nbsp;thay&nbsp;thế&nbsp;để&nbsp;đảm&nbsp;bảo&nbsp;thoải&nbsp;mái.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Mang&nbsp;đến&nbsp;GlassyZone:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Khoảng&nbsp;6&nbsp;tháng&nbsp;đến&nbsp;1&nbsp;năm&nbsp;một&nbsp;lần&nbsp;(hoặc&nbsp;khi&nbsp;cảm&nbsp;thấy&nbsp;kính&nbsp;bị&nbsp;lỏng,&nbsp;lệch&nbsp;form),&nbsp;bạn&nbsp;nên&nbsp;mang&nbsp;kính&nbsp;đến&nbsp;cửa&nbsp;hàng&nbsp;mắt&nbsp;kính&nbsp;GlassyZone&nbsp;để&nbsp;được&nbsp;điều&nbsp;chỉnh,&nbsp;vệ&nbsp;sinh&nbsp;chuyên&nbsp;sâu&nbsp;bằng&nbsp;sóng&nbsp;siêu&nbsp;âm&nbsp;và&nbsp;kiểm&nbsp;tra&nbsp;tổng&nbsp;thể</span></li></ul>', '2026-08-28 10:27:34', '2026-08-29 03:27:19'),
+('0ccffd49-b0cd-44d0-b267-e0357c05f7d9', 'Tròng kính đánh Nikon Rx AS Viewfit Transitions Gen S 1.50', 'trong', 8180000.00, NULL, 10, '<p></p>', '2026-08-28 12:18:03', '2026-08-28 12:18:03'),
+('26bc33ec-aa84-42f7-ab51-e1511f2c7118', 'Gọng kính MACHILA MA5625T 80006', 'gong', 3280000.00, 3400000.00, 20, '<p></p>', '2026-08-28 04:42:41', '2026-08-28 10:53:23'),
+('2893c768-44da-4d58-a8fc-a18ef642b354', 'Gọng kính PETERSON 33051', 'gong', 1180000.00, NULL, 12, '<p></p>', '2026-08-28 10:05:45', '2026-08-28 10:05:45'),
+('3096ffcb-c0dd-44b5-9d46-d5e590bb7446', 'Tròng kính đánh Nikon Rx SeeMax Inifinite Pure Blue UV 1.60', 'trong', 10280000.00, NULL, 15, '<p></p>', '2026-08-28 12:05:27', '2026-08-28 12:05:27'),
+('40d375cd-e42d-49b9-b59a-04893c40caed', 'Gọng kính AVERY ELANI', 'gong', 1400000.00, NULL, 15, '<p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;AVERY&nbsp;ELANI</strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Thiết&nbsp;kế&nbsp;dáng&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">bầu&nbsp;dục</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;với&nbsp;những&nbsp;đường&nbsp;cong&nbsp;mềm&nbsp;mại,&nbsp;phần&nbsp;đuôi&nbsp;hơi&nbsp;xếch&nbsp;nhẹ&nbsp;tạo&nbsp;hiệu&nbsp;ứng&nbsp;mắt&nbsp;mèo&nbsp;tinh&nbsp;tế.&nbsp;Kiểu&nbsp;dáng&nbsp;này&nbsp;giúp&nbsp;gương&nbsp;mặt&nbsp;trông&nbsp;thanh&nbsp;thoát&nbsp;hơn,&nbsp;tôn&nbsp;lên&nbsp;đường&nbsp;nét&nbsp;tự&nbsp;nhiên&nbsp;và&nbsp;mang&nbsp;lại&nbsp;vẻ&nbsp;ngoài&nbsp;trẻ&nbsp;trung,&nbsp;đầy&nbsp;sức&nbsp;sống.</span></p><p></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;có&nbsp;2&nbsp;màu&nbsp;cực&nbsp;ấn&nbsp;tượng:</span></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Classic&nbsp;Black&nbsp;(Đen&nbsp;kinh&nbsp;điển):</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Sắc&nbsp;đen&nbsp;sâu&nbsp;thẳm,&nbsp;biểu&nbsp;tượng&nbsp;của&nbsp;quyền&nbsp;lực&nbsp;và&nbsp;sự&nbsp;sang&nbsp;trọng&nbsp;vượt&nbsp;thời&nbsp;gian.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Transparent&nbsp;Beige&nbsp;(Be&nbsp;trong&nbsp;suốt):</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Tông&nbsp;màu&nbsp;hổ&nbsp;phách&nbsp;nhạt&nbsp;giúp&nbsp;tôn&nbsp;da,&nbsp;làm&nbsp;bừng&nbsp;sáng&nbsp;khuôn&nbsp;mặt&nbsp;và&nbsp;tạo&nbsp;nét&nbsp;đẹp&nbsp;dịu&nbsp;dàng.</span></li></ul><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">AVERY&nbsp;ELANI&nbsp;dành&nbsp;cho&nbsp;ai?</strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;ELANI&nbsp;đặc&nbsp;biệt&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;những&nbsp;dáng&nbsp;mặt&nbsp;vuông,&nbsp;góc&nbsp;cạnh,&nbsp;mặt&nbsp;trái&nbsp;tim&nbsp;hay&nbsp;mặt&nbsp;kim&nbsp;cương;&nbsp;với&nbsp;thiết&nbsp;kế&nbsp;xếch&nbsp;nhẹ&nbsp;kiểu&nbsp;mắt&nbsp;mèo&nbsp;kết&nbsp;hợp&nbsp;cùng&nbsp;form&nbsp;oval&nbsp;mềm&nbsp;mại,&nbsp;mẫu&nbsp;kính&nbsp;này&nbsp;giúp&nbsp;tôn&nbsp;lên&nbsp;đường&nbsp;nét&nbsp;thanh&nbsp;thoát,&nbsp;cân&nbsp;đối&nbsp;khuôn&nbsp;mặt&nbsp;và&nbsp;mang&nbsp;lại&nbsp;vẻ&nbsp;ngoài&nbsp;vừa&nbsp;nữ&nbsp;tính&nbsp;vừa&nbsp;hiện&nbsp;đại.</span></p>', '2026-08-28 09:49:34', '2026-08-28 09:49:34'),
+('431f97b6-0e1c-4e69-85fa-9758f867ad77', 'Tròng kính đánh Nikon Rx AS Viewfit Transitions Xtractive Polarized 1.50', 'trong', 9080000.00, NULL, 32, '<p></p>', '2026-08-28 12:15:38', '2026-08-28 12:15:38'),
+('4742d18b-0402-41af-bcc8-1c22bd41fc07', 'Gọng kính RAYBAN 0RX6645 3086', 'gong', 4104000.00, 5460001.00, 18, '<p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\"><u>Đặc&nbsp;điểm&nbsp;nổi&nbsp;bật</u></strong></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Mẫu&nbsp;gọng&nbsp;Ray-Ban&nbsp;6645</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;mang&nbsp;kiểu&nbsp;phi&nbsp;công&nbsp;(Aviator)&nbsp;kinh&nbsp;điển,&nbsp;nổi&nbsp;bật&nbsp;với&nbsp;đường&nbsp;nét&nbsp;bo&nbsp;tròn&nbsp;mềm&nbsp;mại,&nbsp;tạo&nbsp;cảm&nbsp;giác&nbsp;hài&nbsp;hòa&nbsp;và&nbsp;cân&nbsp;đối&nbsp;cho&nbsp;gương&nbsp;mặt.&nbsp;Thiết&nbsp;kế&nbsp;khung&nbsp;kim&nbsp;loại&nbsp;mảnh,&nbsp;hoàn&nbsp;thiện&nbsp;tông&nbsp;vàng&nbsp;ánh&nbsp;kim&nbsp;sang&nbsp;trọng,&nbsp;mang&nbsp;lại&nbsp;vẻ&nbsp;ngoài&nbsp;tinh&nbsp;tế&nbsp;nhưng&nbsp;không&nbsp;phô&nbsp;trương.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Cấu&nbsp;trúc&nbsp;gọng&nbsp;mảnh&nbsp;giúp&nbsp;tổng&nbsp;thể&nbsp;kính&nbsp;trông&nbsp;gọn&nbsp;nhẹ,&nbsp;hạn&nbsp;chế&nbsp;cảm&nbsp;giác&nbsp;nặng&nbsp;mặt&nbsp;khi&nbsp;đeo.&nbsp;Cầu&nbsp;kính&nbsp;đôi&nbsp;đặc&nbsp;trưng&nbsp;không&nbsp;chỉ&nbsp;tạo&nbsp;điểm&nbsp;nhấn&nbsp;thẩm&nbsp;mỹ&nbsp;mà&nbsp;còn&nbsp;tăng&nbsp;độ&nbsp;ổn&nbsp;định&nbsp;và&nbsp;chắc&nbsp;chắn&nbsp;trong&nbsp;quá&nbsp;trình&nbsp;sử&nbsp;dụng.&nbsp;Phần&nbsp;đệm&nbsp;mũi&nbsp;rời&nbsp;bằng&nbsp;silicon&nbsp;trong&nbsp;suốt&nbsp;có&nbsp;thể&nbsp;điều&nbsp;chỉnh&nbsp;linh&nbsp;hoạt,&nbsp;giúp&nbsp;kính&nbsp;ôm&nbsp;vừa&nbsp;sống&nbsp;mũi&nbsp;và&nbsp;mang&nbsp;lại&nbsp;cảm&nbsp;giác&nbsp;êm&nbsp;ái&nbsp;suốt&nbsp;ngày&nbsp;dài.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Càng&nbsp;kính&nbsp;kim&nbsp;loại&nbsp;thanh&nbsp;thoát,&nbsp;bo&nbsp;cong&nbsp;nhẹ&nbsp;ở&nbsp;đuôi,&nbsp;đảm&nbsp;bảo&nbsp;độ&nbsp;bám&nbsp;tốt&nbsp;sau&nbsp;tai&nbsp;mà&nbsp;vẫn&nbsp;giữ&nbsp;được&nbsp;sự&nbsp;thoải&nbsp;mái.&nbsp;Logo&nbsp;Ray-Ban&nbsp;được&nbsp;in&nbsp;tinh&nbsp;tế&nbsp;trên&nbsp;tròng,&nbsp;khẳng&nbsp;định&nbsp;dấu&nbsp;ấn&nbsp;thương&nbsp;hiệu&nbsp;một&nbsp;cách&nbsp;nhẹ&nbsp;nhàng.</span></p>', '2026-08-28 10:02:38', '2026-08-28 10:02:38'),
+('5d6fa581-d157-447f-a8aa-eb289163692d', 'Kính mát RAYBAN 0RB3025_002/4858', 'gong', 5724000.00, 6359999.00, 15, '<p></p>', '2026-08-28 10:11:39', '2026-08-28 10:12:16'),
+('686b5bfc-2007-49e9-bd4f-5822349d4aef', 'Tròng kính Nikon Myopsee DAS Clear', 'trong', 3180000.00, NULL, 20, '<p></p>', '2026-08-28 12:13:38', '2026-08-28 12:13:55'),
+('8328dde1-4804-45cc-8c04-e7efb57b71fc', 'Gọng kính Avery Julian', 'gong', 960000.00, NULL, 15, '<p class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Sự&nbsp;lựa&nbsp;chọn&nbsp;hoàn&nbsp;hảo&nbsp;cho&nbsp;đôi&nbsp;mắt&nbsp;tinh&nbsp;anh&nbsp;và&nbsp;gu&nbsp;thẩm&nbsp;mỹ&nbsp;tinh&nbsp;tế&nbsp;✨</strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;khoan&nbsp;Avery&nbsp;thường&nbsp;được&nbsp;làm&nbsp;từ&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">chất&nbsp;liệu&nbsp;hợp&nbsp;kim&nbsp;không&nbsp;gỉ</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;mang&nbsp;lại&nbsp;những&nbsp;ưu&nbsp;điểm&nbsp;sau:</span></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Độ&nbsp;bền&nbsp;cao:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Chống&nbsp;ăn&nbsp;mòn,&nbsp;gỉ&nbsp;sét,&nbsp;giữ&nbsp;được&nbsp;vẻ&nbsp;sáng&nbsp;bóng&nbsp;và&nbsp;độ&nbsp;bền&nbsp;theo&nbsp;thời&nbsp;gian.&nbsp;Chịu&nbsp;lực&nbsp;tốt,&nbsp;giảm&nbsp;nguy&nbsp;cơ&nbsp;biến&nbsp;dạng&nbsp;hay&nbsp;gãy&nbsp;vỡ&nbsp;khi&nbsp;va&nbsp;đập.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">An&nbsp;toàn&nbsp;cho&nbsp;da:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Thường&nbsp;không&nbsp;gây&nbsp;dị&nbsp;ứng,&nbsp;phù&nbsp;hợp&nbsp;cho&nbsp;cả&nbsp;làn&nbsp;da&nbsp;nhạy&nbsp;cảm.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tính&nbsp;thẩm&nbsp;mỹ:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Bề&nbsp;mặt&nbsp;kim&nbsp;loại&nbsp;sáng,&nbsp;mịn,&nbsp;tạo&nbsp;vẻ&nbsp;sang&nbsp;trọng&nbsp;và&nbsp;tinh&nbsp;tế.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Nhẹ&nbsp;và&nbsp;thoải&nbsp;mái:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Hợp&nbsp;kim&nbsp;thường&nbsp;nhẹ&nbsp;hơn&nbsp;các&nbsp;chất&nbsp;liệu&nbsp;khác,&nbsp;tạo&nbsp;cảm&nbsp;giác&nbsp;thoải&nbsp;mái&nbsp;khi&nbsp;đeo&nbsp;trong&nbsp;thời&nbsp;gian&nbsp;dài.</span></li></ul><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Ngoài&nbsp;ra,&nbsp;một&nbsp;số&nbsp;gọng&nbsp;kính&nbsp;khoan&nbsp;Avery&nbsp;còn&nbsp;được&nbsp;trang&nbsp;bị&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">bản&nbsp;lề&nbsp;lò&nbsp;xo</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;giúp:</span></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tăng&nbsp;tính&nbsp;linh&nbsp;hoạt:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Càng&nbsp;kính&nbsp;có&nbsp;độ&nbsp;đàn&nbsp;hồi,&nbsp;dễ&nbsp;dàng&nbsp;điều&nbsp;chỉnh&nbsp;để&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;nhiều&nbsp;kích&nbsp;cỡ&nbsp;khuôn&nbsp;mặt.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Độ&nbsp;bền&nbsp;cao:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Cơ&nbsp;chế&nbsp;lò&nbsp;xo&nbsp;được&nbsp;thiết&nbsp;kế&nbsp;chắc&nbsp;chắn,&nbsp;tăng&nbsp;tuổi&nbsp;thọ&nbsp;của&nbsp;kính.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Độ&nbsp;vừa&nbsp;vặn:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Ôm&nbsp;sát&nbsp;khuôn&nbsp;mặt&nbsp;nhẹ&nbsp;nhàng,&nbsp;tránh&nbsp;bị&nbsp;trượt&nbsp;xuống&nbsp;mũi.</span></li></ul><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Vậy&nbsp;gọng&nbsp;kính&nbsp;khoan&nbsp;Avery&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;ai?</strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;khoan&nbsp;nói&nbsp;chung&nbsp;và&nbsp;Avery&nbsp;nói&nbsp;riêng&nbsp;thường&nbsp;có&nbsp;thiết&nbsp;kế&nbsp;thanh&nbsp;lịch,&nbsp;hiện&nbsp;đại&nbsp;và&nbsp;tinh&nbsp;tế,&nbsp;nên&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;nhiều&nbsp;đối&nbsp;tượng:</span></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Người&nbsp;yêu&nbsp;thích&nbsp;sự&nbsp;tối&nbsp;giản&nbsp;và&nbsp;nhẹ&nbsp;nhàng:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Thiết&nbsp;kế&nbsp;không&nbsp;viền&nbsp;tạo&nbsp;cảm&nbsp;giác&nbsp;khuôn&nbsp;mặt&nbsp;thanh&nbsp;thoát&nbsp;và&nbsp;không&nbsp;bị&nbsp;gò&nbsp;bó&nbsp;bởi&nbsp;gọng&nbsp;kính.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Người&nbsp;muốn&nbsp;có&nbsp;tầm&nbsp;nhìn&nbsp;rộng:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Không&nbsp;có&nbsp;viền&nbsp;gọng&nbsp;che&nbsp;khuất&nbsp;tầm&nbsp;nhìn,&nbsp;mang&nbsp;lại&nbsp;trải&nbsp;nghiệm&nbsp;quan&nbsp;sát&nbsp;tốt&nbsp;hơn.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Người&nbsp;làm&nbsp;việc&nbsp;văn&nbsp;phòng&nbsp;hoặc&nbsp;môi&nbsp;trường&nbsp;chuyên&nbsp;nghiệp:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Vẻ&nbsp;ngoài&nbsp;trang&nbsp;nhã&nbsp;và&nbsp;lịch&nbsp;sự&nbsp;của&nbsp;gọng&nbsp;kính&nbsp;khoan&nbsp;rất&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;môi&nbsp;trường&nbsp;công&nbsp;sở.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Người&nbsp;có&nbsp;nhiều&nbsp;hình&nbsp;dáng&nbsp;khuôn&nbsp;mặt&nbsp;khác&nbsp;nhau:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Gọng&nbsp;kính&nbsp;khoan&nbsp;có&nbsp;thể&nbsp;kết&nbsp;hợp&nbsp;với&nbsp;nhiều&nbsp;kiểu&nbsp;dáng&nbsp;tròng&nbsp;kính&nbsp;khác&nbsp;nhau&nbsp;(vuông,&nbsp;tròn,&nbsp;oval,&nbsp;chữ&nbsp;nhật,...)&nbsp;nên&nbsp;dễ&nbsp;dàng&nbsp;điều&nbsp;chỉnh&nbsp;để&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;từng&nbsp;khuôn&nbsp;mặt.&nbsp;Đặc&nbsp;biệt,&nbsp;gọng&nbsp;khoan&nbsp;thường&nbsp;được&nbsp;gợi&nbsp;ý&nbsp;cho&nbsp;những&nbsp;người&nbsp;có&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">khuôn&nbsp;mặt&nbsp;tròn</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;(giúp&nbsp;tạo&nbsp;sự&nbsp;cân&nbsp;đối&nbsp;và&nbsp;thon&nbsp;gọn&nbsp;hơn)&nbsp;hoặc&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">khuôn&nbsp;mặt&nbsp;vuông</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;(giúp&nbsp;làm&nbsp;mềm&nbsp;mại&nbsp;các&nbsp;đường&nbsp;nét&nbsp;góc&nbsp;cạnh).</span></li></ul><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tuy&nbsp;nhiên,&nbsp;do&nbsp;đặc&nbsp;điểm&nbsp;không&nbsp;có&nbsp;viền&nbsp;bảo&nbsp;vệ,&nbsp;gọng&nbsp;kính&nbsp;khoan&nbsp;có&nbsp;thể&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">đòi&nbsp;hỏi&nbsp;sự&nbsp;cẩn&nbsp;thận&nbsp;hơn&nbsp;trong&nbsp;quá&nbsp;trình&nbsp;sử&nbsp;dụng&nbsp;và&nbsp;bảo&nbsp;quản</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;để&nbsp;tránh&nbsp;va&nbsp;đập&nbsp;mạnh&nbsp;có&nbsp;thể&nbsp;gây&nbsp;vỡ&nbsp;hoặc&nbsp;sứt&nbsp;mẻ&nbsp;tròng&nbsp;kính&nbsp;tại&nbsp;các&nbsp;điểm&nbsp;khoan.</span></p>', '2026-08-28 10:57:53', '2026-08-28 10:58:01'),
+('87620fd5-231c-41d7-ba3c-5c7fb09d3a1a', 'Gọng kính PETERSON 2581', 'gong', 1180000.00, NULL, 33, '<p></p>', '2026-08-28 10:09:02', '2026-08-28 10:09:02'),
+('92ba0974-c1e6-4481-bd74-8a86258d6431', 'Gọng kính FLEXI FX5267', 'gong', 840000.00, NULL, 0, '<h1 class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">FLEXI&nbsp;FX5267&nbsp;–</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Sang&nbsp;chảnh&nbsp;từng&nbsp;chi&nbsp;tiết&nbsp;😻</strong></h1><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Thiết&nbsp;kế&nbsp;hiện&nbsp;đại&nbsp;&amp;&nbsp;thanh&nbsp;lịch:&nbsp;</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Kiểu&nbsp;dáng&nbsp;mắt&nbsp;mèo&nbsp;thanh&nbsp;mảnh,&nbsp;giúp&nbsp;tôn&nbsp;lên&nbsp;đường&nbsp;nét&nbsp;gương&nbsp;mặt&nbsp;một&nbsp;cách&nbsp;tự&nbsp;nhiên</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Siêu&nbsp;nhẹ,&nbsp;siêu&nbsp;bền:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Chất&nbsp;liệu&nbsp;Titanium&nbsp;cao&nbsp;cấp,&nbsp;siêu&nbsp;nhẹ,&nbsp;bền&nbsp;bỉ&nbsp;giúp&nbsp;đeo&nbsp;thoải&nbsp;mái&nbsp;cả&nbsp;ngày&nbsp;dài&nbsp;mà&nbsp;không&nbsp;lo&nbsp;đau&nbsp;tai&nbsp;hay&nbsp;sống&nbsp;mũi</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Lắp&nbsp;tròng&nbsp;đa&nbsp;dạng:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Thoải&nbsp;mái&nbsp;chọn&nbsp;tròng&nbsp;cận,&nbsp;viễn,&nbsp;loạn,&nbsp;đổi&nbsp;màu,&nbsp;hạn&nbsp;chế&nbsp;ánh&nbsp;sáng&nbsp;xanh,...&nbsp;đáp&nbsp;ứng&nbsp;mọi&nbsp;nhu&nbsp;cầu&nbsp;thị&nbsp;lực&nbsp;của&nbsp;bạn!</span></li></ul>', '2026-08-28 10:16:03', '2026-08-28 13:06:44'),
+('98944f14-2525-4e41-b6ed-f6221a537233', 'Gọng kính FLEXI FX5826A', 'gong', 940000.00, NULL, 20, '<p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;FLEXI&nbsp;FX5826A</strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Sở&nbsp;hữu&nbsp;dáng&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Clubmaster&nbsp;(Browline)</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;kinh&nbsp;điển,&nbsp;mẫu&nbsp;gọng&nbsp;này&nbsp;nổi&nbsp;bật&nbsp;với&nbsp;phần&nbsp;viền&nbsp;trên&nbsp;dày,&nbsp;tạo&nbsp;điểm&nbsp;nhấn&nbsp;rõ&nbsp;rệt&nbsp;cho&nbsp;ánh&nbsp;nhìn&nbsp;và&nbsp;đường&nbsp;chân&nbsp;mày.&nbsp;Form&nbsp;mắt&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">vuông&nbsp;bo&nbsp;góc&nbsp;mềm&nbsp;mại</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;mang&nbsp;lại&nbsp;vẻ&nbsp;ngoài&nbsp;chỉn&nbsp;chu,&nbsp;chuyên&nbsp;nghiệp&nbsp;nhưng&nbsp;vẫn&nbsp;rất&nbsp;dễ&nbsp;đeo,&nbsp;không&nbsp;kén&nbsp;khuôn&nbsp;mặt.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Phần&nbsp;cầu&nbsp;kính&nbsp;và&nbsp;viền&nbsp;dưới&nbsp;được&nbsp;hoàn&nbsp;thiện&nbsp;bằng&nbsp;kim&nbsp;loại&nbsp;mảnh,&nbsp;giúp&nbsp;tổng&nbsp;thể&nbsp;trở&nbsp;nên&nbsp;thanh&nbsp;thoát,&nbsp;cân&nbsp;đối&nbsp;và&nbsp;không&nbsp;tạo&nbsp;cảm&nbsp;giác&nbsp;nặng&nbsp;nề&nbsp;khi&nbsp;sử&nbsp;dụng&nbsp;lâu.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;</span></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\"><em>Màu&nbsp;sắc:</em></strong></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">-&nbsp;Đen&nbsp;</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">-&nbsp;Tông&nbsp;đen&nbsp;bóng&nbsp;sang&nbsp;trọng&nbsp;ở&nbsp;phần&nbsp;gọng&nbsp;trên&nbsp;kết&nbsp;hợp&nbsp;cùng&nbsp;chi&nbsp;tiết&nbsp;kim&nbsp;loại&nbsp;bạc,&nbsp;mang&nbsp;lại&nbsp;vẻ&nbsp;ngoài&nbsp;lịch&nbsp;lãm,&nbsp;mạnh&nbsp;mẽ&nbsp;và&nbsp;đầy&nbsp;quyền&nbsp;lực.&nbsp;Phù&nbsp;hợp&nbsp;với&nbsp;mọi&nbsp;phong&nbsp;cách,&nbsp;từ&nbsp;công&nbsp;sở&nbsp;đến&nbsp;thường&nbsp;ngày.</span></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">-&nbsp;Xám&nbsp;</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">-&nbsp;Gam&nbsp;xám&nbsp;khói/xám&nbsp;chì&nbsp;thời&nbsp;thượng&nbsp;kết&nbsp;hợp&nbsp;viền&nbsp;kim&nbsp;loại&nbsp;cùng&nbsp;tông&nbsp;hoặc&nbsp;bạc&nbsp;mờ,&nbsp;tạo&nbsp;cảm&nbsp;giác&nbsp;trẻ&nbsp;trung,&nbsp;tinh&nbsp;giản&nbsp;và&nbsp;có&nbsp;chiều&nbsp;sâu&nbsp;lựa&nbsp;chọn&nbsp;lý&nbsp;tưởng&nbsp;cho&nbsp;những&nbsp;ai&nbsp;yêu&nbsp;thích&nbsp;sự&nbsp;mới&nbsp;mẻ&nbsp;nhưng&nbsp;vẫn&nbsp;giữ&nbsp;nét&nbsp;thanh&nbsp;lịch.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Rất&nbsp;hợp&nbsp;với&nbsp;khuôn&nbsp;mặt&nbsp;tròn,&nbsp;trái&nbsp;xoan&nbsp;hoặc&nbsp;mặt&nbsp;dài,&nbsp;thiết&nbsp;kế&nbsp;nhấn&nbsp;phần&nbsp;trên&nbsp;giúp&nbsp;gương&nbsp;mặt&nbsp;trông&nbsp;cân&nbsp;đối,&nbsp;sắc&nbsp;nét&nbsp;và&nbsp;gọn&nbsp;gàng&nbsp;hơn.&nbsp;Lý&nbsp;tưởng&nbsp;để&nbsp;đeo&nbsp;đi&nbsp;làm,&nbsp;đi&nbsp;học,&nbsp;họp&nbsp;hành&nbsp;hoặc&nbsp;tham&nbsp;dự&nbsp;các&nbsp;sự&nbsp;kiện&nbsp;cần&nbsp;sự&nbsp;chỉnh&nbsp;chu,&nbsp;chuyên&nbsp;nghiệp.</span></p>', '2026-08-28 10:22:44', '2026-08-28 10:22:56'),
+('99ad44e5-92f5-4386-9e04-e385a19d30a4', 'Gọng kính 86162', 'gong', 380000.00, NULL, 30, '<p></p>', '2026-08-28 10:45:34', '2026-08-28 10:45:34'),
+('9a2bbccb-0051-4e9e-9f1c-97697055c4c5', 'Gọng kính OAKLEY 8163F', 'gong', 3348000.00, 3720000.00, 15, '<p></p>', '2026-08-28 10:55:43', '2026-08-28 10:55:43'),
+('9ec02930-8449-4039-8532-ff1b5929119d', 'Gọng kính THE JIIA 6011', 'gong', 4380000.00, NULL, 23, '<h2 class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">THE&nbsp;JIIA:&nbsp;BỀN&nbsp;BỈ&nbsp;THEO&nbsp;THỜI&nbsp;GIAN&nbsp;-&nbsp;TỎA&nbsp;SÁNG&nbsp;TỪNG&nbsp;KHOẢNH&nbsp;KHẮC</strong></h2><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;bắt&nbsp;ốc&nbsp;làm&nbsp;từ&nbsp;Titanium&nbsp;là&nbsp;một&nbsp;sản&nbsp;phẩm&nbsp;đột&nbsp;phá&nbsp;trong&nbsp;ngành&nbsp;thời&nbsp;trang&nbsp;kính,&nbsp;mang&nbsp;đến&nbsp;sự&nbsp;kết&nbsp;hợp&nbsp;hoàn&nbsp;hảo&nbsp;giữa&nbsp;tính&nbsp;năng&nbsp;vượt&nbsp;trội&nbsp;và&nbsp;thiết&nbsp;kế&nbsp;tinh&nbsp;tế.&nbsp;Titanium,&nbsp;một&nbsp;trong&nbsp;những&nbsp;chất&nbsp;liệu&nbsp;nhẹ&nbsp;nhất&nbsp;và&nbsp;bền&nbsp;bỉ&nbsp;nhất&nbsp;hiện&nbsp;nay,&nbsp;mang&nbsp;lại&nbsp;cho&nbsp;gọng&nbsp;kính&nbsp;sự&nbsp;chắc&nbsp;chắn&nbsp;mà&nbsp;không&nbsp;hề&nbsp;làm&nbsp;tăng&nbsp;trọng&nbsp;lượng.&nbsp;Điều&nbsp;này&nbsp;giúp&nbsp;người&nbsp;đeo&nbsp;cảm&nbsp;thấy&nbsp;thoải&nbsp;mái&nbsp;suốt&nbsp;cả&nbsp;ngày&nbsp;mà&nbsp;không&nbsp;gặp&nbsp;phải&nbsp;cảm&nbsp;giác&nbsp;nặng&nbsp;nề&nbsp;hay&nbsp;khó&nbsp;chịu,&nbsp;đặc&nbsp;biệt&nbsp;khi&nbsp;đeo&nbsp;trong&nbsp;thời&nbsp;gian&nbsp;dài.&nbsp;Bên&nbsp;cạnh&nbsp;đó,&nbsp;tính&nbsp;chất&nbsp;siêu&nbsp;bền&nbsp;của&nbsp;Titanium&nbsp;giúp&nbsp;gọng&nbsp;kính&nbsp;có&nbsp;khả&nbsp;năng&nbsp;chống&nbsp;gỉ,&nbsp;chống&nbsp;oxy&nbsp;hóa&nbsp;rất&nbsp;tốt,&nbsp;đảm&nbsp;bảo&nbsp;rằng&nbsp;chiếc&nbsp;kính&nbsp;sẽ&nbsp;luôn&nbsp;giữ&nbsp;được&nbsp;vẻ&nbsp;mới&nbsp;mẻ,&nbsp;không&nbsp;bị&nbsp;biến&nbsp;dạng&nbsp;hay&nbsp;hư&nbsp;hỏng&nbsp;theo&nbsp;thời&nbsp;gian,&nbsp;dù&nbsp;phải&nbsp;tiếp&nbsp;xúc&nbsp;với&nbsp;các&nbsp;yếu&nbsp;tố&nbsp;môi&nbsp;trường&nbsp;như&nbsp;mồ&nbsp;hôi,&nbsp;ẩm&nbsp;ướt&nbsp;hay&nbsp;ánh&nbsp;nắng&nbsp;mặt&nbsp;trời.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Điểm&nbsp;đặc&nbsp;biệt&nbsp;của&nbsp;gọng&nbsp;kính&nbsp;này&nbsp;chính&nbsp;là&nbsp;hệ&nbsp;thống&nbsp;bắt&nbsp;ốc&nbsp;chắc&nbsp;chắn,&nbsp;được&nbsp;thiết&nbsp;kế&nbsp;tỉ&nbsp;mỉ&nbsp;và&nbsp;tinh&nbsp;xảo.&nbsp;Hệ&nbsp;thống&nbsp;bắt&nbsp;ốc&nbsp;này&nbsp;giúp&nbsp;cố&nbsp;định&nbsp;các&nbsp;bộ&nbsp;phận&nbsp;của&nbsp;gọng&nbsp;kính&nbsp;một&nbsp;cách&nbsp;an&nbsp;toàn&nbsp;và&nbsp;chắc&nbsp;chắn,&nbsp;ngăn&nbsp;ngừa&nbsp;tình&nbsp;trạng&nbsp;lỏng&nbsp;ốc&nbsp;hay&nbsp;mất&nbsp;ốc&nbsp;trong&nbsp;suốt&nbsp;quá&nbsp;trình&nbsp;sử&nbsp;dụng.&nbsp;Điều&nbsp;này&nbsp;không&nbsp;chỉ&nbsp;nâng&nbsp;cao&nbsp;tính&nbsp;bền&nbsp;bỉ&nbsp;của&nbsp;sản&nbsp;phẩm&nbsp;mà&nbsp;còn&nbsp;góp&nbsp;phần&nbsp;làm&nbsp;tăng&nbsp;độ&nbsp;thẩm&nbsp;mỹ,&nbsp;mang&nbsp;lại&nbsp;một&nbsp;vẻ&nbsp;ngoài&nbsp;gọn&nbsp;gàng&nbsp;và&nbsp;tinh&nbsp;tế&nbsp;cho&nbsp;chiếc&nbsp;kính.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Ngoài&nbsp;những&nbsp;tính&nbsp;năng&nbsp;vượt&nbsp;trội,&nbsp;Titanium&nbsp;còn&nbsp;là&nbsp;một&nbsp;chất&nbsp;liệu&nbsp;hoàn&nbsp;hảo&nbsp;cho&nbsp;những&nbsp;người&nbsp;có&nbsp;làn&nbsp;da&nbsp;nhạy&nbsp;cảm.&nbsp;Gọng&nbsp;kính&nbsp;làm&nbsp;từ&nbsp;Titanium&nbsp;không&nbsp;gây&nbsp;kích&nbsp;ứng,&nbsp;dị&nbsp;ứng&nbsp;hay&nbsp;bất&nbsp;kỳ&nbsp;khó&nbsp;chịu&nbsp;nào&nbsp;khi&nbsp;tiếp&nbsp;xúc&nbsp;với&nbsp;da,&nbsp;giúp&nbsp;người&nbsp;đeo&nbsp;yên&nbsp;tâm&nbsp;sử&nbsp;dụng&nbsp;mà&nbsp;không&nbsp;lo&nbsp;lắng&nbsp;về&nbsp;các&nbsp;vấn&nbsp;đề&nbsp;về&nbsp;sức&nbsp;khỏe.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Với&nbsp;thiết&nbsp;kế&nbsp;hiện&nbsp;đại,&nbsp;đơn&nbsp;giản&nbsp;nhưng&nbsp;không&nbsp;kém&nbsp;phần&nbsp;sang&nbsp;trọng,&nbsp;gọng&nbsp;kính&nbsp;bắt&nbsp;ốc&nbsp;từ&nbsp;Titanium&nbsp;có&nbsp;thể&nbsp;dễ&nbsp;dàng&nbsp;phối&nbsp;hợp&nbsp;với&nbsp;nhiều&nbsp;phong&nbsp;cách&nbsp;thời&nbsp;trang&nbsp;khác&nbsp;nhau,&nbsp;từ&nbsp;những&nbsp;bộ&nbsp;trang&nbsp;phục&nbsp;công&nbsp;sở&nbsp;thanh&nbsp;lịch&nbsp;đến&nbsp;những&nbsp;trang&nbsp;phục&nbsp;năng&nbsp;động,&nbsp;cá&nbsp;tính.&nbsp;Dù&nbsp;là&nbsp;một&nbsp;món&nbsp;phụ&nbsp;kiện&nbsp;thời&nbsp;trang,&nbsp;chiếc&nbsp;kính&nbsp;này&nbsp;còn&nbsp;là&nbsp;một&nbsp;tuyên&nbsp;ngôn&nbsp;về&nbsp;sự&nbsp;tinh&nbsp;tế&nbsp;và&nbsp;gu&nbsp;thẩm&nbsp;mỹ&nbsp;của&nbsp;người&nbsp;đeo,&nbsp;thể&nbsp;hiện&nbsp;sự&nbsp;chú&nbsp;trọng&nbsp;đến&nbsp;chất&nbsp;lượng&nbsp;và&nbsp;sự&nbsp;hoàn&nbsp;hảo&nbsp;trong&nbsp;từng&nbsp;chi&nbsp;tiết.&nbsp;Với&nbsp;sự&nbsp;kết&nbsp;hợp&nbsp;giữa&nbsp;tính&nbsp;năng&nbsp;vượt&nbsp;trội&nbsp;và&nbsp;vẻ&nbsp;đẹp&nbsp;thanh&nbsp;lịch,&nbsp;gọng&nbsp;kính&nbsp;Titanium&nbsp;bắt&nbsp;ốc&nbsp;chắc&nbsp;chắn&nbsp;là&nbsp;lựa&nbsp;chọn&nbsp;lý&nbsp;tưởng&nbsp;cho&nbsp;những&nbsp;ai&nbsp;tìm&nbsp;kiếm&nbsp;một&nbsp;chiếc&nbsp;kính&nbsp;bền&nbsp;bỉ,&nbsp;nhẹ&nbsp;nhàng&nbsp;và&nbsp;đầy&nbsp;phong&nbsp;cách.</span></p>', '2026-08-28 11:00:00', '2026-08-29 03:26:53'),
+('bba3905d-ddc9-453f-b7b4-34209ec81f79', 'Gọng kính AVERY CORA', 'gong', 1400000.00, NULL, 10, '<p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;AVERY&nbsp;CORA</strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Mẫu&nbsp;gọng&nbsp;mang&nbsp;dáng&nbsp;lục&nbsp;giác&nbsp;đặc&nbsp;trưng&nbsp;với&nbsp;phần&nbsp;đỉnh&nbsp;phẳng&nbsp;dứt&nbsp;khoát&nbsp;kết&nbsp;hợp&nbsp;cùng&nbsp;đường&nbsp;bo&nbsp;tròn&nbsp;mềm&nbsp;mại&nbsp;ở&nbsp;phần&nbsp;dưới,&nbsp;tạo&nbsp;nên&nbsp;tổng&nbsp;thể&nbsp;hài&nbsp;hòa&nbsp;và&nbsp;có&nbsp;chiều&nbsp;sâu.&nbsp;Điểm&nbsp;nhấn&nbsp;nằm&nbsp;ở&nbsp;cặp&nbsp;đinh&nbsp;tán&nbsp;kim&nbsp;loại&nbsp;hai&nbsp;bên&nbsp;thái&nbsp;dương,&nbsp;vừa&nbsp;tăng&nbsp;độ&nbsp;chắc&nbsp;chắn&nbsp;cho&nbsp;cấu&nbsp;trúc&nbsp;gọng,&nbsp;vừa&nbsp;gợi&nbsp;lên&nbsp;nét&nbsp;thẩm&nbsp;mỹ&nbsp;đậm&nbsp;chất&nbsp;châu&nbsp;Âu&nbsp;-&nbsp;Mỹ.&nbsp;Thiết&nbsp;kế&nbsp;giúp&nbsp;tôn&nbsp;lên&nbsp;vẻ&nbsp;thông&nbsp;thái,&nbsp;sắc&nbsp;sảo&nbsp;nhưng&nbsp;vẫn&nbsp;giữ&nbsp;được&nbsp;sự&nbsp;tinh&nbsp;tế&nbsp;và&nbsp;hiện&nbsp;đại.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;</span></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\"><em>Màu&nbsp;sắc:</em></strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Sắc&nbsp;đen&nbsp;bóng&nbsp;được&nbsp;xử&nbsp;lý&nbsp;bề&nbsp;mặt&nbsp;kỹ&nbsp;lưỡng,&nbsp;tạo&nbsp;độ&nbsp;phản&nbsp;chiếu&nbsp;vừa&nbsp;phải,&nbsp;mang&nbsp;lại&nbsp;cảm&nbsp;giác&nbsp;cao&nbsp;cấp&nbsp;và&nbsp;chỉn&nbsp;chu.&nbsp;Đây&nbsp;là&nbsp;gam&nbsp;màu&nbsp;kinh&nbsp;điển,&nbsp;dễ&nbsp;dàng&nbsp;tôn&nbsp;gương&nbsp;mặt&nbsp;và&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;nhiều&nbsp;phong&nbsp;cách,&nbsp;thể&nbsp;hiện&nbsp;đẳng&nbsp;cấp&nbsp;thông&nbsp;qua&nbsp;sự&nbsp;giản&nbsp;lược&nbsp;đầy&nbsp;tinh&nbsp;tế.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;</span></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\"><em>Chất&nbsp;liệu:</em></strong></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;kính&nbsp;được&nbsp;chế&nbsp;tác&nbsp;từ&nbsp;nhựa&nbsp;Acetate&nbsp;cao&nbsp;cấp&nbsp;nguyên&nbsp;khối&nbsp;với&nbsp;độ&nbsp;bền&nbsp;cao&nbsp;và&nbsp;độ&nbsp;bóng&nbsp;tự&nbsp;nhiên.&nbsp;Chất&nbsp;liệu&nbsp;thân&nbsp;thiện&nbsp;với&nbsp;da,&nbsp;giữ&nbsp;phom&nbsp;tốt&nbsp;và&nbsp;ổn&nbsp;định&nbsp;theo&nbsp;thời&nbsp;gian.&nbsp;Từng&nbsp;chi&nbsp;tiết&nbsp;được&nbsp;mài&nbsp;giũa&nbsp;cẩn&nbsp;thận,&nbsp;cho&nbsp;bề&nbsp;mặt&nbsp;mịn&nbsp;màng&nbsp;và&nbsp;cảm&nbsp;giác&nbsp;đeo&nbsp;êm&nbsp;ái,&nbsp;chắc&nbsp;chắn.</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;</span></p><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Mẫu&nbsp;gọng&nbsp;là&nbsp;lựa&nbsp;chọn&nbsp;lý&nbsp;tưởng&nbsp;cho&nbsp;những&nbsp;ai&nbsp;yêu&nbsp;thích&nbsp;sự&nbsp;giao&nbsp;thoa&nbsp;giữa&nbsp;tính&nbsp;nghệ&nbsp;thuật&nbsp;và&nbsp;phong&nbsp;thái&nbsp;chuyên&nbsp;nghiệp.&nbsp;Đặc&nbsp;biệt&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;khuôn&nbsp;mặt&nbsp;tròn&nbsp;hoặc&nbsp;bầu&nbsp;dục,&nbsp;giúp&nbsp;tạo&nbsp;đường&nbsp;nét&nbsp;rõ&nbsp;ràng,&nbsp;cân&nbsp;đối&nbsp;và&nbsp;cuốn&nbsp;hút,&nbsp;phù&nbsp;hợp&nbsp;cả&nbsp;trong&nbsp;môi&nbsp;trường&nbsp;làm&nbsp;việc&nbsp;cao&nbsp;cấp&nbsp;lẫn&nbsp;những&nbsp;không&nbsp;gian&nbsp;văn&nbsp;hóa,&nbsp;nghệ&nbsp;thuật.</span></p>', '2026-08-28 09:53:58', '2026-08-28 09:55:08'),
+('cd8e065d-5cdb-4ab6-8e51-6f10daa16d46', 'Gọng kính MACHILA MA4339T', 'gong', 1780000.00, NULL, 21, '<p></p>', '2026-08-28 10:42:38', '2026-08-28 10:42:38'),
+('e4afd1e4-8314-40fc-9951-3faed601fb1b', 'Gọng kính RAYBAN 0RX5447', 'gong', 5274000.00, 5860000.00, 21, '<p></p>', '2026-08-28 09:58:38', '2026-08-28 09:58:38'),
+('eff7246b-0253-49e3-9777-7df7062d89d3', 'Gọng kính THE JIIA 9004', 'gong', 4680000.00, NULL, 5, '<p class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(245, 245, 245);\">THE&nbsp;JIIA&nbsp;9004</strong></p><p class=\"ql-align-center\"><span style=\"color: rgb(208, 208, 208); background-color: rgb(255, 255, 255);\">Vượt&nbsp;xa&nbsp;khái&nbsp;niệm&nbsp;của&nbsp;một&nbsp;phụ&nbsp;kiện&nbsp;thông&nbsp;thường,&nbsp;dáng&nbsp;gọng&nbsp;vuông&nbsp;Iconic&nbsp;từ&nbsp;THE&nbsp;JIIA&nbsp;là&nbsp;sự&nbsp;lựa&nbsp;chọn&nbsp;chuẩn&nbsp;xác&nbsp;cho&nbsp;những&nbsp;ai&nbsp;tìm&nbsp;kiếm&nbsp;sự&nbsp;cân&nbsp;bằng&nbsp;giữa&nbsp;nét&nbsp;cổ&nbsp;điển&nbsp;và&nbsp;tư&nbsp;duy&nbsp;hiện&nbsp;đại.</span></p><p class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">Thiết&nbsp;kế&nbsp;&quot;Golden&nbsp;Fit&quot;:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">&nbsp;Form&nbsp;dáng&nbsp;vuông&nbsp;được&nbsp;tinh&nbsp;chỉnh&nbsp;tỉ&nbsp;mỉ&nbsp;để&nbsp;phù&nbsp;hợp&nbsp;hoàn&nbsp;hảo&nbsp;với&nbsp;dáng&nbsp;mặt&nbsp;của&nbsp;người&nbsp;Châu&nbsp;Á.</span></p><p class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">Chất&nbsp;liệu&nbsp;Acetate&nbsp;tinh&nbsp;xảo:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">&nbsp;Mang&nbsp;lại&nbsp;vẻ&nbsp;ngoài&nbsp;sang&nbsp;trọng&nbsp;cùng&nbsp;độ&nbsp;bền&nbsp;cao&nbsp;theo&nbsp;thời&nbsp;gian.</span></p><p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">Cấu&nbsp;trúc&nbsp;bản&nbsp;lề&nbsp;độc&nbsp;quyền:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">&nbsp;Đảm&nbsp;bảo&nbsp;độ&nbsp;ổn&nbsp;định&nbsp;và&nbsp;chắc&nbsp;chắn&nbsp;lâu&nbsp;dài.</span></p><p></p><p class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">Đệm&nbsp;mũi&nbsp;Beta&nbsp;Titanium:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(229, 229, 229);\">&nbsp;Êm&nbsp;ái,&nbsp;nhẹ&nbsp;và&nbsp;bền&nbsp;bỉ.</span></p>', '2026-08-28 10:48:39', '2026-08-28 10:50:07'),
+('f214d90a-9447-4f58-87e9-a76b7d5b70e1', 'Tròng kính nhuộm màu Essilor Suntints Stock 1.60', 'trong', 1280000.00, NULL, 12, '<p><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tròng&nbsp;kính&nbsp;nhuộm&nbsp;màu&nbsp;Essilor&nbsp;Suntints</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;là&nbsp;dòng&nbsp;tròng&nbsp;kính&nbsp;cao&nbsp;cấp&nbsp;của&nbsp;Essilor,&nbsp;được&nbsp;thiết&nbsp;kế&nbsp;để&nbsp;bảo&nbsp;vệ&nbsp;mắt&nbsp;khỏi&nbsp;ánh&nbsp;nắng&nbsp;mặt&nbsp;trời&nbsp;và&nbsp;tia&nbsp;UV&nbsp;có&nbsp;hại.&nbsp;Với&nbsp;công&nbsp;nghệ&nbsp;nhuộm&nbsp;màu&nbsp;độc&nbsp;đáo,&nbsp;Suntints&nbsp;mang&nbsp;đến&nbsp;cho&nbsp;người&nbsp;dùng&nbsp;trải&nbsp;nghiệm&nbsp;thị&nbsp;giác&nbsp;tuyệt&nbsp;vời&nbsp;với&nbsp;màu&nbsp;sắc&nbsp;trung&nbsp;thực&nbsp;và&nbsp;độ&nbsp;tương&nbsp;phản&nbsp;cao.</span></p><p></p><h2 class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tròng&nbsp;kính&nbsp;nhuộm&nbsp;màu&nbsp;Essilor&nbsp;Suntints&nbsp;&nbsp;–&nbsp;Thời&nbsp;trang&nbsp;cá&nbsp;tính&nbsp;–&nbsp;Duy&nbsp;trì&nbsp;thị&nbsp;lực&nbsp;chân&nbsp;thực&nbsp;–&nbsp;Dễ&nbsp;chịu&nbsp;dưới&nbsp;nắng</strong></h2><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Ưu&nbsp;điểm&nbsp;nổi&nbsp;bật&nbsp;của&nbsp;tròng&nbsp;kính&nbsp;nhuộm&nbsp;màu&nbsp;Essilor&nbsp;Suntints:</span></p><ul><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Bảo&nbsp;vệ&nbsp;mắt&nbsp;tối&nbsp;ưu:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Chống&nbsp;tia&nbsp;UV&nbsp;100%,&nbsp;hạn&nbsp;chế&nbsp;chói&nbsp;và&nbsp;bảo&nbsp;vệ&nbsp;mắt&nbsp;khỏi&nbsp;tác&nbsp;hại&nbsp;của&nbsp;ánh&nbsp;nắng&nbsp;mặt&nbsp;trời.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Màu&nbsp;sắc&nbsp;trung&nbsp;thực:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Công&nbsp;nghệ&nbsp;nhuộm&nbsp;màu&nbsp;tiên&nbsp;tiến&nbsp;giúp&nbsp;duy&nbsp;trì&nbsp;màu&nbsp;sắc&nbsp;tự&nbsp;nhiên&nbsp;và&nbsp;độ&nbsp;tương&nbsp;phản&nbsp;cao,&nbsp;mang&nbsp;lại&nbsp;tầm&nbsp;nhìn&nbsp;rõ&nbsp;nét&nbsp;và&nbsp;thoải&nbsp;mái.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Đa&nbsp;dạng&nbsp;màu&nbsp;sắc:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Có&nbsp;nhiều&nbsp;màu&nbsp;sắc&nbsp;thời&nbsp;trang&nbsp;để&nbsp;lựa&nbsp;chọn,&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;phong&nbsp;cách&nbsp;và&nbsp;sở&nbsp;thích&nbsp;cá&nbsp;nhân.</span></li><li><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Độ&nbsp;bền&nbsp;cao:</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;Chất&nbsp;liệu&nbsp;chống&nbsp;trầy&nbsp;xước&nbsp;và&nbsp;va&nbsp;đập,&nbsp;giúp&nbsp;tròng&nbsp;kính&nbsp;luôn&nbsp;bền&nbsp;đẹp&nbsp;theo&nbsp;thời&nbsp;gian.</span></li></ul><p></p>', '2026-08-28 12:55:32', '2026-08-28 12:55:32'),
+('f75c0cb0-78cd-4ac3-a802-cecd5cc9e4f9', 'Tròng kính chống ánh sáng xanh, chống phản quang Essilor Crizal Natural Look 1.59', 'trong', 4480000.00, NULL, 9, '<h2><strong style=\"background-color: initial; color: rgb(9, 3, 2);\">1.&nbsp;TRÒNG&nbsp;KÍNH&nbsp;CHỐNG&nbsp;PHẢN&nbsp;QUANG&nbsp;ESSILOR&nbsp;CRIZAL&nbsp;NATURAL&nbsp;LOOK</strong></h2><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Crizal&nbsp;Natural&nbsp;Look&nbsp;là&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">lớp&nbsp;phủ&nbsp;chống&nbsp;phản&nbsp;quang&nbsp;thế&nbsp;hệ&nbsp;mới</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;thuộc&nbsp;thương&nbsp;hiệu&nbsp;tròng&nbsp;kính&nbsp;Essilor&nbsp;hàng&nbsp;đầu&nbsp;thế&nbsp;giới&nbsp;đến&nbsp;từ&nbsp;Pháp.&nbsp;Khác&nbsp;với&nbsp;các&nbsp;lớp&nbsp;váng&nbsp;phủ&nbsp;truyền&nbsp;thống&nbsp;vẫn&nbsp;còn&nbsp;để&nbsp;lại&nbsp;ánh&nbsp;phản&nbsp;chiếu&nbsp;xanh&nbsp;hoặc&nbsp;tím&nbsp;khá&nbsp;rõ&nbsp;trên&nbsp;bề&nbsp;mặt&nbsp;tròng&nbsp;kính,&nbsp;Crizal&nbsp;Natural&nbsp;Look&nbsp;được&nbsp;nghiên&nbsp;cứu&nbsp;để&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">giảm&nbsp;tối&nbsp;đa&nbsp;cường&nbsp;độ&nbsp;và&nbsp;màu&nbsp;sắc&nbsp;ánh&nbsp;sáng&nbsp;phản&nbsp;xạ</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;mang&nbsp;lại&nbsp;hiệu&nbsp;ứng&nbsp;tròng&nbsp;kính&nbsp;gần&nbsp;như&nbsp;trong&nbsp;suốt&nbsp;hoàn&nbsp;toàn&nbsp;ở&nbsp;mọi&nbsp;góc&nbsp;nhìn.&nbsp;Nhờ&nbsp;đó,&nbsp;đôi&nbsp;mắt&nbsp;phía&nbsp;sau&nbsp;tròng&nbsp;kính&nbsp;được&nbsp;nhìn&nbsp;thấy&nbsp;rõ&nbsp;ràng&nbsp;và&nbsp;tự&nbsp;nhiên&nbsp;hơn,&nbsp;giúp&nbsp;ánh&nbsp;nhìn&nbsp;trở&nbsp;nên&nbsp;chân&nbsp;thật,&nbsp;tạo&nbsp;cảm&nbsp;giác&nbsp;thoải&nbsp;mái&nbsp;và&nbsp;tự&nbsp;tin&nbsp;trong&nbsp;mọi&nbsp;cuộc&nbsp;trò&nbsp;chuyện&nbsp;hay&nbsp;khi&nbsp;xuất&nbsp;hiện&nbsp;trong&nbsp;những&nbsp;bức&nbsp;ảnh.</span></p>', '2026-08-28 11:04:35', '2026-08-28 11:04:46');
+INSERT INTO `sanpham` (`id`, `ten`, `loai`, `gia`, `gia_cu`, `so_luong_ton`, `mo_ta`, `tao_luc`, `cap_nhat_luc`) VALUES
+('f9c5417c-059c-4d81-943d-3fa54526b5a8', 'Gọng kính FLEXI FX5231B', 'gong', 860000.00, NULL, 50, '<h1 class=\"ql-align-center\"><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">FX5231B&nbsp;–&nbsp;Đa&nbsp;giác&nbsp;tinh&nbsp;tế,&nbsp;cá&nbsp;tính&nbsp;một&nbsp;cách&nbsp;thông&nbsp;minh💟</strong></h1><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">✨&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Thiết&nbsp;kế</strong></p><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Gọng&nbsp;đa&nbsp;giác&nbsp;độc&nbsp;đáo&nbsp;với&nbsp;các&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">đường&nbsp;nét&nbsp;sắc&nbsp;sảo</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;tạo&nbsp;nên&nbsp;sự&nbsp;khác&nbsp;biệt&nbsp;rõ&nbsp;ràng&nbsp;và&nbsp;mạnh&nbsp;mẽ.</span></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Hình&nbsp;khối&nbsp;được&nbsp;thiết&nbsp;kế&nbsp;tỉ&nbsp;mỉ&nbsp;để&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">tôn&nbsp;lên&nbsp;cá&nbsp;tính&nbsp;và&nbsp;gu&nbsp;thời&nbsp;trang</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;của&nbsp;người&nbsp;đeo.</span></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Phong&nbsp;cách&nbsp;hiện&nbsp;đại,&nbsp;phá&nbsp;cách&nbsp;–&nbsp;phù&nbsp;hợp&nbsp;với&nbsp;những&nbsp;ai&nbsp;muốn&nbsp;nổi&nbsp;bật&nbsp;một&nbsp;cách&nbsp;tinh&nbsp;tế.</span></li></ul><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">✨&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Chất&nbsp;liệu&nbsp;&amp;&nbsp;cảm&nbsp;giác&nbsp;đeo</strong></p><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Sản&nbsp;xuất&nbsp;từ&nbsp;chất&nbsp;liệu</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">&nbsp;kim&nbsp;loại&nbsp;</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">cao&nbsp;cấp,&nbsp;bền&nbsp;bỉ&nbsp;và&nbsp;siêu&nbsp;nhẹ.</span></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Thiết&nbsp;kế&nbsp;ưu&nbsp;việt&nbsp;giảm&nbsp;áp&nbsp;lực&nbsp;lên&nbsp;sống&nbsp;mũi&nbsp;và&nbsp;vành&nbsp;tai,&nbsp;đảm&nbsp;bảo&nbsp;sự&nbsp;thoải&nbsp;mái&nbsp;khi&nbsp;đeo&nbsp;cả&nbsp;ngày.</span></li></ul><p><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">✨&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tính&nbsp;ứng&nbsp;dụng</strong></p><ul><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Tương&nbsp;thích&nbsp;hoàn&nbsp;hảo&nbsp;với&nbsp;các&nbsp;loại&nbsp;tròng:&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">cận&nbsp;–&nbsp;viễn&nbsp;–&nbsp;loạn</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;tròng&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">chống&nbsp;ánh&nbsp;sáng&nbsp;xanh</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">đổi&nbsp;màu</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">,&nbsp;tròng&nbsp;</span><strong style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">siêu&nbsp;mỏng</strong><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">…</span></li><li><span style=\"background-color: rgb(255, 255, 255); color: rgb(9, 3, 2);\">Màu&nbsp;sắc&nbsp;cơ&nbsp;bản,&nbsp;phù&nbsp;hợp&nbsp;mọi&nbsp;tone&nbsp;da&nbsp;–&nbsp;dễ&nbsp;dàng&nbsp;mix&nbsp;với&nbsp;trang&nbsp;phục&nbsp;từ&nbsp;công&nbsp;sở&nbsp;đến&nbsp;dạo&nbsp;phố.</span></li></ul>', '2026-08-28 10:19:09', '2026-08-28 10:19:44');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `sanpham_danhgia`
+--
+
+CREATE TABLE `sanpham_danhgia` (
+  `id` char(36) NOT NULL,
+  `sanpham_id` char(36) NOT NULL,
+  `nguoidung_id` char(36) NOT NULL,
+  `so_sao` tinyint UNSIGNED NOT NULL,
+  `noi_dung` text,
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  `cap_nhat_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `sanpham_danhgia`
+--
+
+INSERT INTO `sanpham_danhgia` (`id`, `sanpham_id`, `nguoidung_id`, `so_sao`, `noi_dung`, `tao_luc`, `cap_nhat_luc`) VALUES
+('13c20c31-e979-4065-baa8-5948f562f6cf', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', '0cbd07fd-2c53-4229-ba70-de59f15ad23d', 5, 'Nice', '2026-08-29 01:57:18', '2026-08-29 01:57:18'),
+('4cf93576-2a3e-4929-b6b6-3845f355e55c', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', 5, 'Nice', '2026-08-28 09:45:40', '2026-08-28 09:45:40');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `sanpham_hinhanh`
+--
+
+CREATE TABLE `sanpham_hinhanh` (
+  `id` char(36) NOT NULL,
+  `sanpham_id` char(36) NOT NULL,
+  `duong_dan` varchar(500) NOT NULL,
+  `thu_tu` int NOT NULL DEFAULT '0',
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `sanpham_hinhanh`
+--
+
+INSERT INTO `sanpham_hinhanh` (`id`, `sanpham_id`, `duong_dan`, `thu_tu`, `tao_luc`) VALUES
+('0060d635-6e9c-4fd5-bec4-a01edee8b04a', 'f9c5417c-059c-4d81-943d-3fa54526b5a8', 'uploads/sanpham/sanpham_6a91609d4d0af1.66473046.webp', 0, '2026-08-28 10:19:09'),
+('025e4c2c-51b2-45de-bd25-930c36b0e23a', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', 'uploads/sanpham/sanpham_6a9168a3b07212.24295539.webp', 3, '2026-08-28 10:53:23'),
+('0561a5ad-c12a-4a51-85a6-477d1c928ff9', '98944f14-2525-4e41-b6ed-f6221a537233', 'uploads/sanpham/sanpham_6a916174798187.39966478.webp', 0, '2026-08-28 10:22:44'),
+('07ab40be-63db-404c-843f-aa95334d514d', '8328dde1-4804-45cc-8c04-e7efb57b71fc', 'uploads/sanpham/sanpham_6a9169c1625cc5.49495205.webp', 7, '2026-08-28 10:58:09'),
+('0a57c8ec-9847-4d8b-b8a2-9fd8bfe400ea', '92ba0974-c1e6-4481-bd74-8a86258d6431', 'uploads/sanpham/sanpham_6a915fe3c68849.38635821.webp', 0, '2026-08-28 10:16:03'),
+('0d827736-4e38-4910-b2af-21648392d323', '431f97b6-0e1c-4e69-85fa-9758f867ad77', 'uploads/sanpham/sanpham_6a917bea8fd833.40702255.webp', 0, '2026-08-28 12:15:38'),
+('0f7bb980-e090-491f-b5a3-4a08f25b5884', 'f214d90a-9447-4f58-87e9-a76b7d5b70e1', 'uploads/sanpham/sanpham_6a918544eee4d8.02311984.webp', 0, '2026-08-28 12:55:32'),
+('0f9a8720-34ce-4740-9c4f-e02c013dfe19', '40d375cd-e42d-49b9-b59a-04893c40caed', 'uploads/sanpham/sanpham_6a9159e1312462.30002123.webp', 6, '2026-08-28 09:50:25'),
+('10f496c4-e38f-4ffd-b2d2-882cf6e2f8d6', '2893c768-44da-4d58-a8fc-a18ef642b354', 'uploads/sanpham/sanpham_6a915d8d66b134.73244342.webp', 3, '2026-08-28 10:06:05'),
+('16174996-b056-439a-85d1-92587c3f7056', 'e4afd1e4-8314-40fc-9951-3faed601fb1b', 'uploads/sanpham/sanpham_6a915beac70707.76884755.webp', 5, '2026-08-28 09:59:06'),
+('1b6b40cf-a1f7-4185-b759-462f08bd0fd5', '5d6fa581-d157-447f-a8aa-eb289163692d', 'uploads/sanpham/sanpham_6a915edb1fb206.21661856.jpg', 3, '2026-08-28 10:11:39'),
+('1cde0e43-f375-4cdf-8ae6-793cc3c8d5c4', '4742d18b-0402-41af-bcc8-1c22bd41fc07', 'uploads/sanpham/sanpham_6a915cbe7b9461.51730355.webp', 2, '2026-08-28 10:02:38'),
+('1e229018-12c3-4035-82e0-e3c299f22c2e', 'f9c5417c-059c-4d81-943d-3fa54526b5a8', 'uploads/sanpham/sanpham_6a9160c09605a5.63716870.webp', 4, '2026-08-28 10:19:44'),
+('1f2f7e72-f560-482d-9971-46011d14c459', '2893c768-44da-4d58-a8fc-a18ef642b354', 'uploads/sanpham/sanpham_6a915dac6fbd93.47895984.webp', 6, '2026-08-28 10:06:36'),
+('20539776-1f99-4c2b-b12c-aac67f759c80', '8328dde1-4804-45cc-8c04-e7efb57b71fc', 'uploads/sanpham/sanpham_6a9169c1630153.24796877.webp', 8, '2026-08-28 10:58:09'),
+('205c2ab0-eb62-44f3-998a-dd22b0f4a931', 'eff7246b-0253-49e3-9777-7df7062d89d3', 'uploads/sanpham/sanpham_6a9167e77a82f3.84609450.webp', 4, '2026-08-28 10:50:15'),
+('23319453-052a-4cd9-b50c-3f2cc199c021', '5d6fa581-d157-447f-a8aa-eb289163692d', 'uploads/sanpham/sanpham_6a915ee7d53ea5.52303131.webp', 4, '2026-08-28 10:11:51'),
+('2465205e-8f4f-485c-869d-d3e4254a2add', '2893c768-44da-4d58-a8fc-a18ef642b354', 'uploads/sanpham/sanpham_6a915d8d654208.94726518.webp', 0, '2026-08-28 10:06:05'),
+('282560f6-66d4-4071-a555-8ea801c048df', 'bba3905d-ddc9-453f-b7b4-34209ec81f79', 'uploads/sanpham/sanpham_6a915adddefc55.53411773.webp', 2, '2026-08-28 09:54:37'),
+('2a924def-61b2-49bc-95b9-c1b572b0d4a8', 'e4afd1e4-8314-40fc-9951-3faed601fb1b', 'uploads/sanpham/sanpham_6a915c05a10116.07932991.webp', 6, '2026-08-28 09:59:33'),
+('2a9fa71d-ddbc-4c80-ab11-acac1c2af37a', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', 'uploads/sanpham/sanpham_6a9168a3b106c6.02243411.webp', 4, '2026-08-28 10:53:23'),
+('334b0306-f6b7-46e4-b516-1b3cb27cdcee', '98944f14-2525-4e41-b6ed-f6221a537233', 'uploads/sanpham/sanpham_6a9161747b70e3.82239834.jpg', 3, '2026-08-28 10:22:44'),
+('37e737e0-99c0-4a77-b2ec-289b38dbd149', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', 'uploads/sanpham/sanpham_6a9168a3afd8d3.76230114.webp', 2, '2026-08-28 10:53:23'),
+('37fd2340-cc8e-4d08-961e-5885477b1d5c', '4742d18b-0402-41af-bcc8-1c22bd41fc07', 'uploads/sanpham/sanpham_6a915cbe7c2118.74146816.webp', 3, '2026-08-28 10:02:38'),
+('39ab3fd0-153e-4cf9-97c9-f1198601dad3', '92ba0974-c1e6-4481-bd74-8a86258d6431', 'uploads/sanpham/sanpham_6a915ff0df2867.33332816.webp', 3, '2026-08-28 10:16:16'),
+('3c079cd3-29ed-4253-b119-d3b31b3b676a', '2893c768-44da-4d58-a8fc-a18ef642b354', 'uploads/sanpham/sanpham_6a915d8d672176.00427129.webp', 4, '2026-08-28 10:06:05'),
+('3cd0c469-c628-4c99-882e-20f258191361', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', 'uploads/sanpham/sanpham_6a916296596f37.11997687.webp', 0, '2026-08-28 10:27:34'),
+('417920ef-90f5-4580-9df1-f84b505662ad', '9a2bbccb-0051-4e9e-9f1c-97697055c4c5', 'uploads/sanpham/sanpham_6a91693c4b12e8.53577333.webp', 4, '2026-08-28 10:55:56'),
+('438d12b6-7d26-45ed-8416-b488d738dbd8', '40d375cd-e42d-49b9-b59a-04893c40caed', 'uploads/sanpham/sanpham_6a9159e12ffb67.70021186.jpg', 4, '2026-08-28 09:50:25'),
+('47d95065-54b4-40d5-8ff9-0253bd4cb93d', '9ec02930-8449-4039-8532-ff1b5929119d', 'uploads/sanpham/sanpham_6a916a408f9700.72449929.webp', 3, '2026-08-28 11:00:16'),
+('4af596e0-45f2-4f07-ba72-6a992707a071', '431f97b6-0e1c-4e69-85fa-9758f867ad77', 'uploads/sanpham/sanpham_6a917bea9075e6.48021695.webp', 1, '2026-08-28 12:15:38'),
+('51783e1e-12a6-44c0-abd3-8fb0c7245f5a', '99ad44e5-92f5-4386-9e04-e385a19d30a4', 'uploads/sanpham/sanpham_6a9166e24734a5.39216285.webp', 1, '2026-08-28 10:45:54'),
+('5522fd23-6469-4cdc-b8c1-3567d0031ae5', '92ba0974-c1e6-4481-bd74-8a86258d6431', 'uploads/sanpham/sanpham_6a915fe93c83e5.61078563.jpg', 1, '2026-08-28 10:16:09'),
+('5759644b-dd54-4e1e-a20d-4bb88fddac78', 'bba3905d-ddc9-453f-b7b4-34209ec81f79', 'uploads/sanpham/sanpham_6a915adddf6a74.40831082.jpg', 3, '2026-08-28 09:54:37'),
+('57a681bb-e259-4bd3-aea6-082baaddf4a9', 'f214d90a-9447-4f58-87e9-a76b7d5b70e1', 'uploads/sanpham/sanpham_6a918544ef8151.97712245.webp', 1, '2026-08-28 12:55:32'),
+('5a8d5af6-3e74-4d5d-94ec-6de0112eb78e', 'eff7246b-0253-49e3-9777-7df7062d89d3', 'uploads/sanpham/sanpham_6a9167e77b84f3.34176302.webp', 6, '2026-08-28 10:50:15'),
+('5bf65b4d-ea6d-414d-8ce9-f97e6b8bdda8', 'bba3905d-ddc9-453f-b7b4-34209ec81f79', 'uploads/sanpham/sanpham_6a915b03a8fd85.31014284.webp', 5, '2026-08-28 09:55:15'),
+('6034d658-9c90-4277-8066-c358aa3eb87e', 'eff7246b-0253-49e3-9777-7df7062d89d3', 'uploads/sanpham/sanpham_6a9167870855a5.92674374.webp', 1, '2026-08-28 10:48:39'),
+('61492c71-2354-4a88-81f2-d432cd9e977a', '3096ffcb-c0dd-44b5-9d46-d5e590bb7446', 'uploads/sanpham/sanpham_6a9179972f7f50.08897828.webp', 3, '2026-08-28 12:05:43'),
+('63c21dbb-a157-444f-9e3d-3ed0e2229f5d', '87620fd5-231c-41d7-ba3c-5c7fb09d3a1a', 'uploads/sanpham/sanpham_6a915e65d26af1.13515281.webp', 5, '2026-08-28 10:09:41'),
+('63ccebd8-dac9-4640-afae-0ead54648ca1', '9ec02930-8449-4039-8532-ff1b5929119d', 'uploads/sanpham/sanpham_6a916a376742e5.83866861.jpg', 2, '2026-08-28 11:00:07'),
+('650c6694-586b-44c8-ac73-8ff5371bc2d8', '8328dde1-4804-45cc-8c04-e7efb57b71fc', 'uploads/sanpham/sanpham_6a9169c1616b37.82227312.webp', 5, '2026-08-28 10:58:09'),
+('65ae5aed-f51b-491e-85c2-040ce570fe4b', '92ba0974-c1e6-4481-bd74-8a86258d6431', 'uploads/sanpham/sanpham_6a915ff0de8f65.77261753.webp', 2, '2026-08-28 10:16:16'),
+('6627e6db-1320-4025-9ebc-6b20e582acbe', '3096ffcb-c0dd-44b5-9d46-d5e590bb7446', 'uploads/sanpham/sanpham_6a91798742e2c9.17586581.webp', 1, '2026-08-28 12:05:27'),
+('6a11f760-7245-4eeb-9a6d-1bc2a2ee2392', '98944f14-2525-4e41-b6ed-f6221a537233', 'uploads/sanpham/sanpham_6a916185cdce92.44436096.webp', 4, '2026-08-28 10:23:01'),
+('6ead46ce-85b3-4a91-9c5b-1ae3b6401248', '431f97b6-0e1c-4e69-85fa-9758f867ad77', 'uploads/sanpham/sanpham_6a917bea90fe14.00673611.webp', 2, '2026-08-28 12:15:38'),
+('72bf9a69-5419-4a0f-9bcc-d01767dd3154', '87620fd5-231c-41d7-ba3c-5c7fb09d3a1a', 'uploads/sanpham/sanpham_6a915e3e59b336.48245303.webp', 0, '2026-08-28 10:09:02'),
+('76d50cd5-95b0-4d00-a5fc-d2a4dd806d7b', 'cd8e065d-5cdb-4ab6-8e51-6f10daa16d46', 'uploads/sanpham/sanpham_6a91662745b029.78221383.webp', 3, '2026-08-28 10:42:47'),
+('79170069-2112-475c-8c49-a9b9d7612ecb', '40d375cd-e42d-49b9-b59a-04893c40caed', 'uploads/sanpham/sanpham_6a9159e1307f34.38044319.jpg', 5, '2026-08-28 09:50:25'),
+('7a40106f-eb2a-4d32-bfb9-d77e3f256916', '2893c768-44da-4d58-a8fc-a18ef642b354', 'uploads/sanpham/sanpham_6a915da4496e58.76991648.webp', 5, '2026-08-28 10:06:28'),
+('82276e42-676b-4d01-a7aa-c1e5ab9467a4', '686b5bfc-2007-49e9-bd4f-5822349d4aef', 'uploads/sanpham/sanpham_6a917b72971e26.89766210.webp', 2, '2026-08-28 12:13:38'),
+('84cae186-2076-47de-b36d-b23667cfc603', 'f75c0cb0-78cd-4ac3-a802-cecd5cc9e4f9', 'uploads/sanpham/sanpham_6a916b618ac090.21494919.webp', 2, '2026-08-28 11:05:05'),
+('86dca0db-63ad-4078-a1a9-22c0e1211e74', 'e4afd1e4-8314-40fc-9951-3faed601fb1b', 'uploads/sanpham/sanpham_6a915beac67a29.51794024.jpg', 4, '2026-08-28 09:59:06'),
+('904271c6-6f15-4009-afae-305467a569ae', '87620fd5-231c-41d7-ba3c-5c7fb09d3a1a', 'uploads/sanpham/sanpham_6a915e582eda82.83297699.jpg', 3, '2026-08-28 10:09:28'),
+('9260877f-c64b-461c-8508-ff32e0c04424', '92ba0974-c1e6-4481-bd74-8a86258d6431', 'uploads/sanpham/sanpham_6a915ff0dfcea0.76918977.webp', 4, '2026-08-28 10:16:16'),
+('92893bd4-a2db-4188-bfe5-1cf50ae196c9', 'e4afd1e4-8314-40fc-9951-3faed601fb1b', 'uploads/sanpham/sanpham_6a915bcea36ca6.20969805.webp', 2, '2026-08-28 09:58:38'),
+('9ad4d076-56e5-4959-a476-e9e510c8e890', '40d375cd-e42d-49b9-b59a-04893c40caed', 'uploads/sanpham/sanpham_6a9159ae18a019.91342497.webp', 3, '2026-08-28 09:49:34'),
+('9cdc4a06-8d4a-4a14-b6a0-31bd7214e833', '9ec02930-8449-4039-8532-ff1b5929119d', 'uploads/sanpham/sanpham_6a916a30827f37.62714513.webp', 0, '2026-08-28 11:00:00'),
+('a3aa6147-f4ea-4414-b0ea-6b08da6600f4', '99ad44e5-92f5-4386-9e04-e385a19d30a4', 'uploads/sanpham/sanpham_6a9166f981e151.02537396.webp', 5, '2026-08-28 10:46:17'),
+('a438c315-9b82-41a3-9301-2bf5eefbdbbc', 'f9c5417c-059c-4d81-943d-3fa54526b5a8', 'uploads/sanpham/sanpham_6a91609d4db5b0.37969272.webp', 1, '2026-08-28 10:19:09'),
+('a498e6a1-6002-4f03-ab7a-d726e449f373', '0ccffd49-b0cd-44d0-b267-e0357c05f7d9', 'uploads/sanpham/sanpham_6a917c7b74e6d3.81435634.webp', 1, '2026-08-28 12:18:03'),
+('a9bf7ba1-c15d-40ce-a2e2-47618f482320', 'f75c0cb0-78cd-4ac3-a802-cecd5cc9e4f9', 'uploads/sanpham/sanpham_6a916b618b5405.86241791.webp', 3, '2026-08-28 11:05:05'),
+('b0ce409e-81b6-49f4-8ea6-43169e488c58', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', 'uploads/sanpham/sanpham_6a9168a3ae8c94.11162228.webp', 0, '2026-08-28 10:53:23'),
+('b2171fc4-dd26-4eb0-a70c-187fc032c378', '0ccffd49-b0cd-44d0-b267-e0357c05f7d9', 'uploads/sanpham/sanpham_6a917c7b7555a6.58628756.webp', 2, '2026-08-28 12:18:03'),
+('b33b51d1-77bd-4bb4-aefc-7d63cfaeaf5b', '98944f14-2525-4e41-b6ed-f6221a537233', 'uploads/sanpham/sanpham_6a916185ce7a59.41533731.webp', 5, '2026-08-28 10:23:01'),
+('b35a1d01-29bb-44ba-94d8-9ad79f9483af', 'bba3905d-ddc9-453f-b7b4-34209ec81f79', 'uploads/sanpham/sanpham_6a915b03a88581.69781439.webp', 4, '2026-08-28 09:55:15'),
+('b70a4d20-bcf7-41ce-95ad-9723b8a677a0', '4742d18b-0402-41af-bcc8-1c22bd41fc07', 'uploads/sanpham/sanpham_6a915cbe7a74f9.75301845.webp', 0, '2026-08-28 10:02:38'),
+('b9a5d109-b78c-4daa-8e4f-07660d1c84d2', 'f214d90a-9447-4f58-87e9-a76b7d5b70e1', 'uploads/sanpham/sanpham_6a918544f0cc13.04949655.webp', 3, '2026-08-28 12:55:32'),
+('baa102a6-852d-4180-85da-fe802ae6e2d3', '8328dde1-4804-45cc-8c04-e7efb57b71fc', 'uploads/sanpham/sanpham_6a9169b1092793.56632976.webp', 4, '2026-08-28 10:57:53'),
+('be9b0c85-cc8c-4fb5-a31d-bc6c88d5c95b', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', 'uploads/sanpham/sanpham_6a9162ab33f9e6.34785297.webp', 5, '2026-08-28 10:27:55'),
+('cdbe68ae-117c-4902-ba4a-35f74cb4495b', '4742d18b-0402-41af-bcc8-1c22bd41fc07', 'uploads/sanpham/sanpham_6a915cbe7b1558.92374390.jpg', 1, '2026-08-28 10:02:38'),
+('ceda07ca-9262-4f05-84c2-12e112d7daed', '0ccffd49-b0cd-44d0-b267-e0357c05f7d9', 'uploads/sanpham/sanpham_6a917c7b748429.26889262.webp', 0, '2026-08-28 12:18:03'),
+('d1565432-ea4c-46b5-b4af-ea52db436b2e', 'cd8e065d-5cdb-4ab6-8e51-6f10daa16d46', 'uploads/sanpham/sanpham_6a91661ed90404.62374039.jpg', 1, '2026-08-28 10:42:38'),
+('d1682a38-443c-4e99-9f13-348b0079c1e4', '99ad44e5-92f5-4386-9e04-e385a19d30a4', 'uploads/sanpham/sanpham_6a9166f980f957.37877050.webp', 3, '2026-08-28 10:46:17'),
+('d1a34ae8-4572-4aa0-a819-fa500353a7d2', '98944f14-2525-4e41-b6ed-f6221a537233', 'uploads/sanpham/sanpham_6a916185cefb50.01447062.webp', 6, '2026-08-28 10:23:01'),
+('d6b8624e-3bce-4d4f-ae6e-398ec02fa053', '5d6fa581-d157-447f-a8aa-eb289163692d', 'uploads/sanpham/sanpham_6a915ee7d5b3e6.87038704.jpg', 5, '2026-08-28 10:11:51'),
+('d7084003-07bf-4a0b-92d8-ccf804b6fd34', 'eff7246b-0253-49e3-9777-7df7062d89d3', 'uploads/sanpham/sanpham_6a916787092901.69262616.jpg', 3, '2026-08-28 10:48:39'),
+('d718cd6b-8efd-40b8-936d-58428a6ce3ab', 'cd8e065d-5cdb-4ab6-8e51-6f10daa16d46', 'uploads/sanpham/sanpham_6a9166274527d0.03630301.webp', 2, '2026-08-28 10:42:47'),
+('d83400b0-1319-41d0-bb29-0257dddeb01c', '9a2bbccb-0051-4e9e-9f1c-97697055c4c5', 'uploads/sanpham/sanpham_6a91693c4a6ad2.22814698.webp', 3, '2026-08-28 10:55:56'),
+('dbd50711-9a14-4dd6-9025-26771aa4c625', '686b5bfc-2007-49e9-bd4f-5822349d4aef', 'uploads/sanpham/sanpham_6a917b7c3610a4.15189428.webp', 3, '2026-08-28 12:13:48'),
+('deb57e42-fbd3-4c4c-bcd5-6f38210dfd83', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', 'uploads/sanpham/sanpham_6a9162ab34a829.39685529.webp', 6, '2026-08-28 10:27:55'),
+('df2ef57a-d7b2-40fc-8a89-ec383f0ee31e', 'f75c0cb0-78cd-4ac3-a802-cecd5cc9e4f9', 'uploads/sanpham/sanpham_6a916b4323c459.39447474.webp', 1, '2026-08-28 11:04:35'),
+('e3d80e22-cf34-4bb0-84f4-c45952ff0456', '8328dde1-4804-45cc-8c04-e7efb57b71fc', 'uploads/sanpham/sanpham_6a9169c161e5c8.00035012.webp', 6, '2026-08-28 10:58:09'),
+('e5cc6928-35e9-4c26-8434-f9ca55a6ced1', 'cd8e065d-5cdb-4ab6-8e51-6f10daa16d46', 'uploads/sanpham/sanpham_6a91661ed88050.24195697.webp', 0, '2026-08-28 10:42:38'),
+('e7f55aa5-ad56-4a4a-91eb-923bd46502c2', 'eff7246b-0253-49e3-9777-7df7062d89d3', 'uploads/sanpham/sanpham_6a9167e77b0031.54858447.webp', 5, '2026-08-28 10:50:15'),
+('eace45c4-0f5b-4223-b5c6-1dc4ecfeca1a', 'f9c5417c-059c-4d81-943d-3fa54526b5a8', 'uploads/sanpham/sanpham_6a9160c0957e37.53696630.webp', 3, '2026-08-28 10:19:44'),
+('ed33def2-3b0c-4a10-8d85-8fc8ebb109e7', 'f214d90a-9447-4f58-87e9-a76b7d5b70e1', 'uploads/sanpham/sanpham_6a918544f02e32.27703023.webp', 2, '2026-08-28 12:55:32'),
+('ef102cfc-013c-4c24-bc75-90ef9c9d79be', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', 'uploads/sanpham/sanpham_6a9168a3af4279.35444745.jpg', 1, '2026-08-28 10:53:23'),
+('ef5e4a87-d387-4a14-8488-a53c45080b61', '99ad44e5-92f5-4386-9e04-e385a19d30a4', 'uploads/sanpham/sanpham_6a9166f9804b88.78162779.webp', 2, '2026-08-28 10:46:17'),
+('f0d0a387-5fc1-4775-ba7f-9c92d77b3d42', '99ad44e5-92f5-4386-9e04-e385a19d30a4', 'uploads/sanpham/sanpham_6a9166f9816d67.99575414.webp', 4, '2026-08-28 10:46:17'),
+('f1ccaadb-5a22-45b8-8880-8768cdfc7176', '686b5bfc-2007-49e9-bd4f-5822349d4aef', 'uploads/sanpham/sanpham_6a917b72969915.02003068.webp', 1, '2026-08-28 12:13:38'),
+('f692ac44-5293-458c-9e9a-85bfbe1b95b9', '9a2bbccb-0051-4e9e-9f1c-97697055c4c5', 'uploads/sanpham/sanpham_6a91692f3c76e2.07814576.webp', 1, '2026-08-28 10:55:43'),
+('f92879b4-99d4-447c-bade-db3bfcda5f50', '87620fd5-231c-41d7-ba3c-5c7fb09d3a1a', 'uploads/sanpham/sanpham_6a915e65d1fdd7.69204901.webp', 4, '2026-08-28 10:09:41'),
+('fc008182-5633-4adf-86d5-2d0900f5c311', '9a2bbccb-0051-4e9e-9f1c-97697055c4c5', 'uploads/sanpham/sanpham_6a91693c49cb57.11902985.webp', 2, '2026-08-28 10:55:56'),
+('fe1755bb-4c73-4fbc-a6bd-0a2ce9894671', 'f9c5417c-059c-4d81-943d-3fa54526b5a8', 'uploads/sanpham/sanpham_6a9160c094f5a3.49911853.webp', 2, '2026-08-28 10:19:44'),
+('fee4c0c2-2cc8-4763-8692-95b666ec6fa2', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', 'uploads/sanpham/sanpham_6a9162965bc885.69602067.webp', 4, '2026-08-28 10:27:34'),
+('ff0f1724-ee59-4d96-a073-346400b2120f', '5d6fa581-d157-447f-a8aa-eb289163692d', 'uploads/sanpham/sanpham_6a915edb1e16a9.70626166.jpg', 0, '2026-08-28 10:11:39');
+
+-- --------------------------------------------------------
+
+--
+-- Cấu trúc bảng cho bảng `sanpham_yeuthich`
+--
+
+CREATE TABLE `sanpham_yeuthich` (
+  `id` char(36) NOT NULL,
+  `sanpham_id` char(36) NOT NULL,
+  `nguoidung_id` char(36) NOT NULL,
+  `tao_luc` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_0900_ai_ci;
+
+--
+-- Đang đổ dữ liệu cho bảng `sanpham_yeuthich`
+--
+
+INSERT INTO `sanpham_yeuthich` (`id`, `sanpham_id`, `nguoidung_id`, `tao_luc`) VALUES
+('0296b344-bb34-4a77-9532-c4d302ac8189', '8328dde1-4804-45cc-8c04-e7efb57b71fc', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 12:59:00'),
+('451f6045-4c9c-4a89-a538-89635d5f5e49', 'bba3905d-ddc9-453f-b7b4-34209ec81f79', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 14:21:12'),
+('4db1d673-0395-4df4-97f8-6d0c1d00f485', 'cd8e065d-5cdb-4ab6-8e51-6f10daa16d46', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 12:58:55'),
+('548adfe1-1dc6-4221-b52e-d796ac95fca1', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', 'e608ce3b-408b-443e-99c2-ca46bc4e7bce', '2026-08-29 04:34:09'),
+('60fe92ea-a316-4734-beec-eaaac3305939', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', '0cbd07fd-2c53-4229-ba70-de59f15ad23d', '2026-08-28 14:56:31'),
+('65a7853c-3e37-4371-b90a-c74e0c335c01', 'eff7246b-0253-49e3-9777-7df7062d89d3', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 12:58:58'),
+('678a234b-b955-4727-bf7d-320739fdec51', '9ec02930-8449-4039-8532-ff1b5929119d', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 12:59:02'),
+('76454409-af3e-495f-9744-19d6c7afafc9', '40d375cd-e42d-49b9-b59a-04893c40caed', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 14:21:10'),
+('99c1334d-687b-48d6-bc82-f3fc65b5bbfa', 'e4afd1e4-8314-40fc-9951-3faed601fb1b', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 14:21:12'),
+('d1efc3be-9002-4245-aa7c-21173714a746', '9a2bbccb-0051-4e9e-9f1c-97697055c4c5', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 12:58:59'),
+('eaab279d-0bb9-46f6-8b3a-45697e7a3f03', '26bc33ec-aa84-42f7-ab51-e1511f2c7118', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 14:21:11'),
+('f1db84e7-d94c-4562-8a45-7d7b201cdf11', '03c18bcf-b31f-4477-ad1d-692d4ef50d65', '9e6eff15-78ec-466a-ab1a-ff1fb13e7e2c', '2026-08-28 14:21:02');
+
+--
+-- Chỉ mục cho các bảng đã đổ
+--
+
+--
+-- Chỉ mục cho bảng `donhang`
+--
+ALTER TABLE `donhang`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_donhang_nguoidung` (`nguoidung_id`),
+  ADD KEY `idx_donhang_trangthai` (`trang_thai`);
+
+--
+-- Chỉ mục cho bảng `donhang_chitiet`
+--
+ALTER TABLE `donhang_chitiet`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `fk_ct_donkinh` (`don_kinh_id`),
+  ADD KEY `idx_ct_donhang` (`donhang_id`),
+  ADD KEY `idx_ct_sanpham` (`sanpham_id`);
+
+--
+-- Chỉ mục cho bảng `don_kinh`
+--
+ALTER TABLE `don_kinh`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_donkinh_nguoidung` (`nguoidung_id`);
+
+--
+-- Chỉ mục cho bảng `nguoidung`
+--
+ALTER TABLE `nguoidung`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `email` (`email`);
+
+--
+-- Chỉ mục cho bảng `sanpham`
+--
+ALTER TABLE `sanpham`
+  ADD PRIMARY KEY (`id`);
+
+--
+-- Chỉ mục cho bảng `sanpham_danhgia`
+--
+ALTER TABLE `sanpham_danhgia`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_danhgia_sanpham_user` (`sanpham_id`,`nguoidung_id`),
+  ADD KEY `idx_danhgia_sanpham` (`sanpham_id`),
+  ADD KEY `idx_danhgia_nguoidung` (`nguoidung_id`);
+
+--
+-- Chỉ mục cho bảng `sanpham_hinhanh`
+--
+ALTER TABLE `sanpham_hinhanh`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `idx_hinhanh_sanpham` (`sanpham_id`);
+
+--
+-- Chỉ mục cho bảng `sanpham_yeuthich`
+--
+ALTER TABLE `sanpham_yeuthich`
+  ADD PRIMARY KEY (`id`),
+  ADD UNIQUE KEY `uq_yeuthich_sanpham_user` (`sanpham_id`,`nguoidung_id`),
+  ADD KEY `idx_yeuthich_sanpham` (`sanpham_id`),
+  ADD KEY `idx_yeuthich_nguoidung` (`nguoidung_id`);
+
+--
+-- Ràng buộc đối với các bảng kết xuất
+--
+
+--
+-- Ràng buộc cho bảng `donhang`
+--
+ALTER TABLE `donhang`
+  ADD CONSTRAINT `fk_donhang_nguoidung` FOREIGN KEY (`nguoidung_id`) REFERENCES `nguoidung` (`id`) ON DELETE RESTRICT;
+
+--
+-- Ràng buộc cho bảng `donhang_chitiet`
+--
+ALTER TABLE `donhang_chitiet`
+  ADD CONSTRAINT `fk_ct_donhang` FOREIGN KEY (`donhang_id`) REFERENCES `donhang` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_ct_donkinh` FOREIGN KEY (`don_kinh_id`) REFERENCES `don_kinh` (`id`) ON DELETE SET NULL,
+  ADD CONSTRAINT `fk_ct_sanpham` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE RESTRICT;
+
+--
+-- Ràng buộc cho bảng `don_kinh`
+--
+ALTER TABLE `don_kinh`
+  ADD CONSTRAINT `fk_donkinh_nguoidung` FOREIGN KEY (`nguoidung_id`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE;
+
+--
+-- Ràng buộc cho bảng `sanpham_danhgia`
+--
+ALTER TABLE `sanpham_danhgia`
+  ADD CONSTRAINT `fk_danhgia_nguoidung` FOREIGN KEY (`nguoidung_id`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_danhgia_sanpham` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE;
+
+--
+-- Ràng buộc cho bảng `sanpham_hinhanh`
+--
+ALTER TABLE `sanpham_hinhanh`
+  ADD CONSTRAINT `fk_hinhanh_sanpham` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE;
+
+--
+-- Ràng buộc cho bảng `sanpham_yeuthich`
+--
+ALTER TABLE `sanpham_yeuthich`
+  ADD CONSTRAINT `fk_yeuthich_nguoidung` FOREIGN KEY (`nguoidung_id`) REFERENCES `nguoidung` (`id`) ON DELETE CASCADE,
+  ADD CONSTRAINT `fk_yeuthich_sanpham` FOREIGN KEY (`sanpham_id`) REFERENCES `sanpham` (`id`) ON DELETE CASCADE;
+COMMIT;
+
+/*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;
+/*!40101 SET CHARACTER_SET_RESULTS=@OLD_CHARACTER_SET_RESULTS */;
+/*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
+
+SET FOREIGN_KEY_CHECKS = 1;
