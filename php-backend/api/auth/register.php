@@ -67,6 +67,6 @@ $user = [
 ];
 
 // Tự đăng nhập luôn sau khi đăng ký thành công
-Auth::login($user);
+$token = Auth::login($user);
 
-Response::success('Đăng ký thành công', $user, 201);
+Response::success('Đăng ký thành công', array_merge($user, ['token' => $token]), 201);

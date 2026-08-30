@@ -41,6 +41,9 @@ $user = [
     'anh_dai_dien' => $row['anh_dai_dien'],
 ];
 
-Auth::login($user);
+$token = Auth::login($user);
 
-Response::success('Đăng nhập thành công', $user);
+// Gửi token kèm trong response để frontend lưu vào localStorage và gửi lại
+// qua header "Authorization: Bearer ..." ở các request sau (không dùng cookie nữa,
+// vì cookie cross-domain bị nhiều trình duyệt mobile/iOS chặn).
+Response::success('Đăng nhập thành công', array_merge($user, ['token' => $token]));

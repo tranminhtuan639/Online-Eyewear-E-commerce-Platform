@@ -5,3 +5,7 @@ docker run --name phpmyadmin --network web_1_default -e PMA_HOST=mysql -e PMA_PO
 // dọn lại  docker
 docker stop phpmyadmin
 docker rm phpmyadmin
+
+git add frontend/src/pages/ProductDetailPage.jsx
+git commit -m ".............."
+git push origin advanced

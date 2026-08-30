@@ -5,29 +5,42 @@ import axios from 'axios'
 //
 // Khi deploy thật (frontend trên Vercel/Netlify, backend PHP trên Railway):
 // đặt biến môi trường VITE_API_BASE_URL = https://reinforcevision.up.railway.app
-// trong file .env.production (không có dấu "/" ở cuối). Lúc đó baseURL sẽ trỏ
-// thẳng sang Railway, không phụ thuộc proxy nữa.
-//
-// LƯU Ý: vì 2 domain khác nhau nên bắt buộc:
-//  - Backend PHP phải bật CORS cho đúng domain frontend + Access-Control-Allow-Credentials: true
-//  - Cookie session PHP phải set SameSite=None; Secure (yêu cầu HTTPS ở cả 2 phía)
+// trong Environment Variables của Vercel (không có dấu "/" ở cuối).
 const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || ''
+
+const TOKEN_STORAGE_KEY = 'auth_token'
 
 const api = axios.create({
   baseURL: `${API_BASE_URL}/api`,
-  withCredentials: true,
 })
 
-// FIX: Thêm interceptor để đảm bảo cookie được gửi kèm tất cả request
-// Đặc biệt quan trọng trên mobile, nơi cookie có thể bị xóa khi refresh
+// Đăng nhập giờ dùng JWT (header Authorization: Bearer ...) thay vì cookie session,
+// vì cookie cross-domain (frontend Vercel <-> backend Railway) bị Safari/iOS và
+// nhiều trình duyệt mobile khác chặn mặc định (ITP), không thể fix bằng cấu hình
+// SameSite/Secure thông thường. Token lưu trong localStorage, gắn vào mọi request
+// qua interceptor bên dưới.
 api.interceptors.request.use(
   (config) => {
-    // Đảm bảo withCredentials luôn được bật cho mỗi request
-    config.withCredentials = true
+    const token = localStorage.getItem(TOKEN_STORAGE_KEY)
+    if (token) {
+      config.headers.Authorization = `Bearer ${token}`
+    }
     return config
   },
   (error) => Promise.reject(error)
 )
+
+export function setAuthToken(token) {
+  if (token) {
+    localStorage.setItem(TOKEN_STORAGE_KEY, token)
+  } else {
+    localStorage.removeItem(TOKEN_STORAGE_KEY)
+  }
+}
+
+export function getAuthToken() {
+  return localStorage.getItem(TOKEN_STORAGE_KEY)
+}
 
 /**
  * Ghép đường dẫn ảnh tương đối (backend trả về vd: "uploads/sanpham/abc.jpg")
