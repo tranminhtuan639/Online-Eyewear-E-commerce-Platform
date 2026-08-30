@@ -13,10 +13,6 @@ jobs:
     name: Deploy to Vercel (Production)
     runs-on: ubuntu-latest
 
-    defaults:
-      run:
-        working-directory: frontend
-
     steps:
       - name: Checkout code
         uses: actions/checkout@v4
