@@ -18,6 +18,17 @@ const api = axios.create({
   withCredentials: true,
 })
 
+// FIX: Thêm interceptor để đảm bảo cookie được gửi kèm tất cả request
+// Đặc biệt quan trọng trên mobile, nơi cookie có thể bị xóa khi refresh
+api.interceptors.request.use(
+  (config) => {
+    // Đảm bảo withCredentials luôn được bật cho mỗi request
+    config.withCredentials = true
+    return config
+  },
+  (error) => Promise.reject(error)
+)
+
 /**
  * Ghép đường dẫn ảnh tương đối (backend trả về vd: "uploads/sanpham/abc.jpg")
  * thành URL dùng được với <img>.
