@@ -346,7 +346,7 @@ export default function ProductDetailPage() {
               <div className="pd-info-box">
                 <span className="pd-info-icon">♢</span>
                 <div>
-                  <strong>Bảo hành 12 tháng</strong>
+                  <strong>Bảo hành lên đến 120 ngày</strong>
                   <p>Chính hãng toàn quốc</p>
                 </div>
               </div>
