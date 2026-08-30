@@ -1,0 +1,7 @@
+php -r "echo password_hash('mat_khau', PASSWORD_DEFAULT);"
+php -r "echo password_hash('Qq147898', PASSWORD_DEFAULT);"
+// đưa database local host lên phpMyAdmin
+docker run --name phpmyadmin --network web_1_default -e PMA_HOST=mysql -e PMA_PORT=3306 -p 8081:80 -d phpmyadmin
+// dọn lại  docker
+docker stop phpmyadmin
+docker rm phpmyadmin

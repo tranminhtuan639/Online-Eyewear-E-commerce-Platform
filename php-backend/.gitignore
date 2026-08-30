@@ -23,8 +23,8 @@ php-backend/.env
 php-backend/config/config.local.php
 
 # Các file ảnh/file do người dùng hoặc admin upload lên (Tránh nặng repo)
-php-backend/uploads/*
-!php-backend/uploads/.gitkeep
+# php-backend/uploads/*
+# !php-backend/uploads/.gitkeep
 
 # ==========================================
 # 3. COMPRESSED & SYSTEM FILES (File nén & Hệ thống)
