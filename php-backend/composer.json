@@ -1,0 +1,12 @@
+{
+  "name": "matkinh/php-backend",
+  "description": "PHP API backend",
+  "require": {
+    "php": ">=8.2",
+    "ext-json": "*",
+    "ext-mbstring": "*",
+    "ext-pdo": "*",
+    "ext-pdo_mysql": "*",
+    "ext-gd": "*"
+  }
+}

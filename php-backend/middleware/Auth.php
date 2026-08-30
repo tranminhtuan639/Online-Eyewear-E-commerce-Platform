@@ -9,13 +9,16 @@ class Auth
     public static function start(): void
     {
         if (session_status() === PHP_SESSION_NONE) {
-            // Cookie session an toàn hơn: httponly chống JS đọc cookie (XSS),
-            // samesite=Lax chống CSRF cơ bản.
+            // Local HTTP: SameSite=Lax (Vite proxy cùng origin).
+            // Production HTTPS + frontend khác domain: SameSite=None; Secure
+            // để trình duyệt gửi cookie cross-origin kèm withCredentials.
+            $https = self::isHttps();
             session_set_cookie_params([
                 'lifetime' => 0,
                 'path'     => '/',
+                'secure'   => $https,
                 'httponly' => true,
-                'samesite' => 'Lax',
+                'samesite' => $https ? 'None' : 'Lax',
             ]);
             session_start();
         }
@@ -40,9 +43,25 @@ class Auth
         $_SESSION = [];
         if (ini_get('session.use_cookies')) {
             $params = session_get_cookie_params();
-            setcookie('PHPSESSID', '', time() - 42000, $params['path']);
+            setcookie(session_name(), '', [
+                'expires'  => time() - 42000,
+                'path'     => $params['path'] ?? '/',
+                'secure'   => (bool)($params['secure'] ?? false),
+                'httponly' => (bool)($params['httponly'] ?? true),
+                'samesite' => $params['samesite'] ?? 'Lax',
+            ]);
         }
         session_destroy();
+    }
+
+    private static function isHttps(): bool
+    {
+        if (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') {
+            return true;
+        }
+
+        $forwarded = $_SERVER['HTTP_X_FORWARDED_PROTO'] ?? '';
+        return strtolower(explode(',', $forwarded)[0]) === 'https';
     }
 
     public static function user(): ?array

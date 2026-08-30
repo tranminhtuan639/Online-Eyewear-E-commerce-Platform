@@ -43,10 +43,17 @@ function loadEnv(string $path): void
             }
         }
 
-        if ($key !== '') {
-            putenv("$key=$value");
-            $_ENV[$key] = $value;
+        if ($key === '') {
+            continue;
         }
+
+        // Không ghi đè biến đã có (Railway/Docker inject sẵn DB_HOST, APP_DEBUG...).
+        if (array_key_exists($key, $_ENV) || getenv($key) !== false) {
+            continue;
+        }
+
+        putenv("$key=$value");
+        $_ENV[$key] = $value;
     }
 }
 
@@ -55,6 +62,18 @@ function loadEnv(string $path): void
  */
 function env(string $key, $default = null)
 {
-    $value = $_ENV[$key] ?? getenv($key);
-    return $value === false ? $default : $value;
+    if (array_key_exists($key, $_ENV)) {
+        return $_ENV[$key];
+    }
+
+    $fromGetenv = getenv($key);
+    if ($fromGetenv !== false) {
+        return $fromGetenv;
+    }
+
+    if (array_key_exists($key, $_SERVER) && is_string($_SERVER[$key])) {
+        return $_SERVER[$key];
+    }
+
+    return $default;
 }

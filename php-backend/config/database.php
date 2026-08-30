@@ -24,9 +24,14 @@ function getDbConnection(): PDO
             http_response_code(500);
             header('Content-Type: application/json; charset=utf-8');
 
+            $message = 'Không kết nối được database';
+            if (defined('APP_DEBUG') && APP_DEBUG) {
+                $message .= ': ' . $e->getMessage();
+            }
+
             echo json_encode([
                 'success' => false,
-                'message' => 'Không kết nối được database: ' . $e->getMessage(),
+                'message' => $message,
             ]);
 
             exit;
