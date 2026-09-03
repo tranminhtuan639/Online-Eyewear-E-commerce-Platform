@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate, Link } from 'react-router-dom'
 import { getSanPhamById, listSanPham } from '../api/sanPham'
+import { duongDanSanPham, layIdTuSlug } from '../utils/slug'
 import { toggleYeuThich } from '../api/yeuThich'
 import { listDanhGia, guiDanhGia, xoaDanhGia } from '../api/danhGia'
 import { getImageUrl } from '../api/axios'
@@ -27,7 +28,8 @@ function renderStars(diem) {
 }
 
 export default function ProductDetailPage() {
-  const { id } = useParams()
+  const { slug } = useParams()
+  const id = layIdTuSlug(slug)
   const navigate = useNavigate()
   const { addToCart } = useCart()
   const { user } = useAuth()
@@ -70,6 +72,13 @@ export default function ProductDetailPage() {
         setProduct(data)
         setDaYeuThich(Boolean(data.da_yeu_thich))
         setLuotYeuThich(Number(data.luot_yeu_thich || 0))
+
+        // Nếu URL đang dùng slug cũ/sai tên (vd: link chia sẻ trước đây chỉ có id trần),
+        // tự sửa lại thanh địa chỉ về đúng slug chuẩn, không thêm mục vào lịch sử back.
+        const duongDanChuan = duongDanSanPham(data)
+        if (`/san-pham/${slug}` !== duongDanChuan) {
+          navigate(duongDanChuan, { replace: true })
+        }
       })
       .catch(() => navigate('/'))
       .finally(() => setLoading(false))
@@ -484,7 +493,7 @@ export default function ProductDetailPage() {
             <h2>Sản phẩm tương tự</h2>
             <div className="pd-similar-grid">
               {similar.map(sp => (
-                <Link to={`/san-pham/${sp.id}`} key={sp.id} className="pd-similar-card">
+                <Link to={duongDanSanPham(sp)} key={sp.id} className="pd-similar-card">
                   <div className="pd-similar-image">
                     {sp.anh_a ? (
                       <img src={getImageUrl(sp.anh_a)} alt={sp.ten} />

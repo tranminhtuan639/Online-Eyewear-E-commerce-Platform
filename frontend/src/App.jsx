@@ -46,7 +46,7 @@ function App() {
                 <main>
                   <Routes>
                     <Route path="/" element={<HomePage />} />
-                    <Route path="/san-pham/:id" element={<ProductDetailPage />} />
+                    <Route path="/san-pham/:slug" element={<ProductDetailPage />} />
                     <Route path="/gio-hang" element={<CartPage />} />
                     <Route path="/checkout" element={<CheckoutPage />} />
                     <Route path="/don-hang" element={<OrdersPage />} />

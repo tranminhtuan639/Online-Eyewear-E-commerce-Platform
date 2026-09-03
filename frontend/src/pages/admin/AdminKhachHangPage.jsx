@@ -83,47 +83,83 @@ export default function AdminKhachHangPage() {
         {loading ? (
           <div className="text-center py-16 text-gray-400">Đang tải...</div>
         ) : (
-          <table className="w-full text-sm">
-            <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
-              <tr>
-                <th className="px-5 py-3 text-left">Họ tên</th>
-                <th className="px-5 py-3 text-left">Email</th>
-                <th className="px-5 py-3 text-left">Ngày tạo</th>
-                <th className="px-5 py-3 text-center">Thao tác</th>
-              </tr>
-            </thead>
-            <tbody className="divide-y divide-gray-50">
+          <>
+            {/* Mobile: danh sách dạng card, có sẵn 2 nút thao tác */}
+            <div className="sm:hidden divide-y divide-gray-50">
               {list.length === 0 ? (
-                <tr>
-                  <td colSpan={4} className="text-center py-12 text-gray-400">Không có khách hàng</td>
-                </tr>
+                <div className="text-center py-12 text-gray-400">Không có khách hàng</div>
               ) : list.map(u => (
-                <tr key={u.id} className="hover:bg-gray-50 transition">
-                  <td className="px-5 py-3.5 font-medium text-gray-800">{u.ho_ten}</td>
-                  <td className="px-5 py-3.5 text-gray-500">{u.email}</td>
-                  <td className="px-5 py-3.5 text-gray-400 text-xs">
-                    {u.tao_luc ? new Date(u.tao_luc).toLocaleDateString('vi-VN') : '—'}
-                  </td>
-                  <td className="px-5 py-3.5">
-                    <div className="flex items-center justify-center gap-2">
-                      <button
-                        onClick={() => openDoiMatKhau(u)}
-                        className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg transition"
-                      >
-                        Đổi mật khẩu
-                      </button>
-                      <button
-                        onClick={() => setConfirmDeleteUser(u)}
-                        className="text-xs bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-600 px-3 py-1.5 rounded-lg transition"
-                      >
-                        Xóa
-                      </button>
+                <div key={u.id} className="p-4">
+                  <div className="flex items-start justify-between gap-3 mb-3">
+                    <div className="min-w-0">
+                      <p className="font-medium text-gray-800 truncate">{u.ho_ten}</p>
+                      <p className="text-sm text-gray-500 truncate">{u.email}</p>
                     </div>
-                  </td>
-                </tr>
+                    <span className="text-xs text-gray-400 shrink-0">
+                      {u.tao_luc ? new Date(u.tao_luc).toLocaleDateString('vi-VN') : '—'}
+                    </span>
+                  </div>
+                  <div className="flex items-center gap-2">
+                    <button
+                      onClick={() => openDoiMatKhau(u)}
+                      className="flex-1 text-xs font-medium bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-2 rounded-lg transition"
+                    >
+                      Đổi mật khẩu
+                    </button>
+                    <button
+                      onClick={() => setConfirmDeleteUser(u)}
+                      className="flex-1 text-xs font-medium bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-600 px-3 py-2 rounded-lg transition"
+                    >
+                      Xóa
+                    </button>
+                  </div>
+                </div>
               ))}
-            </tbody>
-          </table>
+            </div>
+
+            {/* Desktop / tablet: bảng đầy đủ */}
+            <table className="w-full text-sm hidden sm:table">
+              <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
+                <tr>
+                  <th className="px-5 py-3 text-left">Họ tên</th>
+                  <th className="px-5 py-3 text-left">Email</th>
+                  <th className="px-5 py-3 text-left">Ngày tạo</th>
+                  <th className="px-5 py-3 text-center">Thao tác</th>
+                </tr>
+              </thead>
+              <tbody className="divide-y divide-gray-50">
+                {list.length === 0 ? (
+                  <tr>
+                    <td colSpan={4} className="text-center py-12 text-gray-400">Không có khách hàng</td>
+                  </tr>
+                ) : list.map(u => (
+                  <tr key={u.id} className="hover:bg-gray-50 transition">
+                    <td className="px-5 py-3.5 font-medium text-gray-800">{u.ho_ten}</td>
+                    <td className="px-5 py-3.5 text-gray-500">{u.email}</td>
+                    <td className="px-5 py-3.5 text-gray-400 text-xs">
+                      {u.tao_luc ? new Date(u.tao_luc).toLocaleDateString('vi-VN') : '—'}
+                    </td>
+                    <td className="px-5 py-3.5">
+                      <div className="flex items-center justify-center gap-2">
+                        <button
+                          onClick={() => openDoiMatKhau(u)}
+                          className="text-xs bg-blue-50 hover:bg-blue-100 text-blue-600 px-3 py-1.5 rounded-lg transition"
+                        >
+                          Đổi mật khẩu
+                        </button>
+                        <button
+                          onClick={() => setConfirmDeleteUser(u)}
+                          className="text-xs bg-gray-100 hover:bg-red-100 hover:text-red-600 text-gray-600 px-3 py-1.5 rounded-lg transition"
+                        >
+                          Xóa
+                        </button>
+                      </div>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </>
         )}
       </div>
 

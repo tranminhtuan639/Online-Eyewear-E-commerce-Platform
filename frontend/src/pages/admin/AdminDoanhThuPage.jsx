@@ -7,7 +7,6 @@ import {
 } from 'recharts'
 
 const trangThaiOptions = [
-  { value: 'cho_thanh_toan',        label: 'Chờ xác nhận',        color: 'bg-blue-100 text-blue-700',     hex: '#3b82f6' },
   { value: 'cho_xac_nhan',          label: 'Chờ xác nhận',        color: 'bg-blue-100 text-blue-700',     hex: '#3b82f6' },
   { value: 'dang_xu_ly',            label: 'Đang xử lý',          color: 'bg-indigo-100 text-indigo-700', hex: '#6366f1' },
   { value: 'dang_giao',             label: 'Đang giao',           color: 'bg-purple-100 text-purple-700', hex: '#a855f7' },
@@ -312,7 +311,7 @@ export default function AdminDoanhThuPage() {
               <select
                 value={tableTrangThaiFilter}
                 onChange={e => setTableTrangThaiFilter(e.target.value)}
-                className="border border-gray-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-300"
+                className="w-full sm:w-auto border border-gray-200 rounded-lg px-3 py-1.5 text-xs focus:outline-none focus:ring-2 focus:ring-blue-300"
               >
                 <option value="">Tất cả trạng thái</option>
                 {trangThaiOptions.map(tt => (
@@ -320,7 +319,26 @@ export default function AdminDoanhThuPage() {
                 ))}
               </select>
             </div>
-            <table className="w-full text-sm">
+
+            {/* Mobile: dạng danh sách card, hiện số đơn + tổng tiền cho từng trạng thái */}
+            <div className="sm:hidden divide-y divide-gray-50">
+              {bangHienThi.length === 0 ? (
+                <div className="text-center py-12 text-gray-400 text-sm">Không có dữ liệu trong khoảng thời gian này</div>
+              ) : bangHienThi.map(tt => (
+                <div key={tt.value} className="px-4 py-3.5 flex items-center justify-between gap-3">
+                  <span className={`text-xs font-medium px-2 py-0.5 rounded-full shrink-0 ${tt.color}`}>
+                    {tt.label}
+                  </span>
+                  <div className="text-right shrink-0">
+                    <p className="text-sm text-gray-600">{tt.count} đơn</p>
+                    <p className="text-sm font-bold text-gray-800">{tt.tong.toLocaleString('vi-VN')}₫</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+
+            {/* Desktop / tablet: bảng đầy đủ với sort */}
+            <table className="w-full text-sm hidden sm:table">
               <thead className="bg-gray-50 text-gray-500 text-xs uppercase">
                 <tr>
                   <SortHeader label="Trạng thái" sortKey="label" align="left" sortConfig={sortConfig} onSort={handleSort} />

@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
 import { getImageUrl } from '../api/axios'
 import { toggleYeuThich } from '../api/yeuThich'
+import { duongDanSanPham } from '../utils/slug'
 
 const loaiLabel = {
   gong: 'Gọng kính',
@@ -61,7 +62,7 @@ export default function ProductCard({ product, onUnfavorited }) {
 
   const handleProductClick = () => {
     navigate(
-      `/san-pham/${product.id}`
+      duongDanSanPham(product)
     )
   }
 
