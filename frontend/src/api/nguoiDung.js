@@ -4,6 +4,9 @@ import api from './axios'
 export const login = (email, mat_khau) =>
   api.post('/auth/login.php', { email, mat_khau })
 
+export const googleLogin = (credential) =>
+  api.post('/auth/google-login.php', { credential })
+
 export const register = (email, mat_khau, ho_ten) =>
   api.post('/auth/register.php', { email, mat_khau, ho_ten })
 

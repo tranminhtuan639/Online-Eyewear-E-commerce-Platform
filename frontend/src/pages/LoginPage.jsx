@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useState, useEffect, useCallback } from 'react'
 import { useNavigate, Link } from 'react-router-dom'
 import { useAuth } from '../context/AuthContext'
 
@@ -9,7 +9,7 @@ const redirectByRole = {
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const { login } = useAuth()
+  const { login, googleLogin } = useAuth()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
   const [email, setEmail] = useState('')
@@ -32,6 +32,73 @@ export default function LoginPage() {
       setLoading(false)
     }
   }
+
+  const handleGoogleLogin = useCallback(async (response) => {
+    try {
+      setLoading(true)
+      setError('')
+
+      const user = await googleLogin(response.credential)
+
+      navigate(redirectByRole[user.vai_tro] ?? '/')
+    } catch (err) {
+      console.error('Google Login Error:', err)
+
+      setError(
+        err.response?.data?.message ||
+        'Đăng nhập bằng Google thất bại'
+      )
+    } finally {
+      setLoading(false)
+    }
+  }, [googleLogin, navigate])
+
+  useEffect(() => {
+    let interval
+
+    const renderGoogleButton = () => {
+      if (!window.google?.accounts?.id) {
+        return false
+      }
+
+      const container = document.getElementById('google-login-button')
+
+      if (!container) {
+        return false
+      }
+
+      container.innerHTML = ''
+
+      window.google.accounts.id.initialize({
+        client_id: import.meta.env.VITE_GOOGLE_CLIENT_ID,
+        callback: handleGoogleLogin,
+      })
+
+      window.google.accounts.id.renderButton(container, {
+        theme: 'outline',
+        size: 'large',
+        width: 330,
+        text: 'signin_with',
+        shape: 'rectangular',
+      })
+
+      return true
+    }
+
+    if (!renderGoogleButton()) {
+      interval = setInterval(() => {
+        if (renderGoogleButton()) {
+          clearInterval(interval)
+        }
+      }, 100)
+    }
+
+    return () => {
+      if (interval) {
+        clearInterval(interval)
+      }
+    }
+  }, [handleGoogleLogin])
 
 return (
   <div 
@@ -81,6 +148,16 @@ return (
           {loading ? 'Đang đăng nhập...' : 'Đăng nhập'}
         </button>
       </form>
+
+      <div className="my-5 flex items-center gap-3">
+        <div className="h-px flex-1 bg-gray-300" />
+        <span className="text-xs text-gray-500">HOẶC</span>
+        <div className="h-px flex-1 bg-gray-300" />
+      </div>
+
+      <div className="flex justify-center">
+        <div id="google-login-button" />
+      </div>
 
       <p className="text-center text-sm text-gray-600 mt-4">
         Chưa có tài khoản?{' '}
