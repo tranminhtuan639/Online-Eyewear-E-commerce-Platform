@@ -47,23 +47,6 @@ CREATE TABLE sanpham_hinhanh (
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================
--- BẢNG ĐƠN KÍNH
--- =====================
-CREATE TABLE don_kinh (
-  id              CHAR(36) NOT NULL PRIMARY KEY,
-  nguoidung_id    CHAR(36) NOT NULL,
-  od_cau          DECIMAL(5,2),
-  os_cau          DECIMAL(5,2),
-  khoang_dong_tu  DECIMAL(5,2),
-  file_url        TEXT,
-  ghi_chu         TEXT,
-  tao_luc         TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
-  cap_nhat_luc    TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
-  CONSTRAINT fk_donkinh_nguoidung FOREIGN KEY (nguoidung_id)
-    REFERENCES nguoidung (id) ON DELETE CASCADE
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
--- =====================
 -- BẢNG ĐƠN HÀNG
 -- =====================
 CREATE TABLE donhang (
@@ -104,16 +87,13 @@ CREATE TABLE donhang_chitiet (
   id            CHAR(36) NOT NULL PRIMARY KEY,
   donhang_id    CHAR(36) NOT NULL,
   sanpham_id    CHAR(36) NOT NULL,
-  don_kinh_id   CHAR(36),
   so_luong      INT NOT NULL CHECK (so_luong > 0),
   gia_ban       DECIMAL(12,2) NOT NULL CHECK (gia_ban >= 0),
   tao_luc       TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP,
   CONSTRAINT fk_ct_donhang FOREIGN KEY (donhang_id)
     REFERENCES donhang (id) ON DELETE CASCADE,
   CONSTRAINT fk_ct_sanpham FOREIGN KEY (sanpham_id)
-    REFERENCES sanpham (id) ON DELETE RESTRICT,
-  CONSTRAINT fk_ct_donkinh FOREIGN KEY (don_kinh_id)
-    REFERENCES don_kinh (id) ON DELETE SET NULL
+    REFERENCES sanpham (id) ON DELETE RESTRICT
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 -- =====================
@@ -121,7 +101,6 @@ CREATE TABLE donhang_chitiet (
 -- =====================
 CREATE INDEX idx_donhang_nguoidung ON donhang (nguoidung_id);
 CREATE INDEX idx_donhang_trangthai ON donhang (trang_thai);
-CREATE INDEX idx_donkinh_nguoidung ON don_kinh (nguoidung_id);
 CREATE INDEX idx_ct_donhang ON donhang_chitiet (donhang_id);
 CREATE INDEX idx_ct_sanpham ON donhang_chitiet (sanpham_id);
 CREATE INDEX idx_hinhanh_sanpham ON sanpham_hinhanh (sanpham_id);

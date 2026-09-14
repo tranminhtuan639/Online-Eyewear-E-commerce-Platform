@@ -9,8 +9,12 @@ class Upload
     private const CLOUDINARY_DESTROY_URL = 'https://api.cloudinary.com/v1_1/%s/image/destroy';
 
     /**
-     * Upload 1 file ảnh lên Cloudinary, vào thư mục con "rtv/{subfolder}".
-     * Trả về URL ảnh (secure_url) để lưu vào DB / trả về frontend.
+     * Lưu 1 file ảnh đã upload.
+     * - Nếu có đủ cấu hình CLOUDINARY_* trong .env -> upload lên Cloudinary,
+     *   trả về URL đầy đủ (dùng cho môi trường production/Railway).
+     * - Nếu KHÔNG có cấu hình Cloudinary -> lưu local vào /uploads/{subfolder}/
+     *   như cách cũ, trả về path tương đối (dùng cho local dev, đỡ phải tạo
+     *   tài khoản Cloudinary khi chỉ chạy thử trên máy).
      *
      * @throws Exception nếu file không hợp lệ hoặc upload thất bại
      */
@@ -18,7 +22,57 @@ class Upload
     {
         self::validateFile($file);
 
-        [$cloudName, $apiKey, $apiSecret] = self::getCredentials();
+        $credentials = self::getCredentials();
+
+        return $credentials !== null
+            ? self::saveToCloudinary($file, $subfolder, $credentials)
+            : self::saveToLocalDisk($file, $subfolder);
+    }
+
+    /**
+     * Xoá ảnh. Tự nhận diện dựa trên định dạng lưu:
+     * - URL tuyệt đối (Cloudinary) -> gọi API xoá trên Cloudinary
+     * - Path tương đối (local, dev hoặc ảnh cũ trước khi đổi) -> unlink() trực tiếp
+     */
+    public static function deleteFile(string $imagePathOrUrl): void
+    {
+        if (self::isAbsoluteUrl($imagePathOrUrl)) {
+            self::deleteFromCloudinary($imagePathOrUrl);
+            return;
+        }
+
+        $fullPath = __DIR__ . '/../' . $imagePathOrUrl;
+        if (is_file($fullPath)) {
+            @unlink($fullPath);
+        }
+    }
+
+    // ================== LOCAL (dev, không có Cloudinary) ==================
+
+    private static function saveToLocalDisk(array $file, string $subfolder): string
+    {
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+
+        $targetDir = __DIR__ . '/../uploads/' . $subfolder . '/';
+        if (!is_dir($targetDir)) {
+            mkdir($targetDir, 0755, true);
+        }
+
+        $fileName = uniqid($subfolder . '_', true) . '.' . $ext;
+        $targetPath = $targetDir . $fileName;
+
+        if (!move_uploaded_file($file['tmp_name'], $targetPath)) {
+            throw new Exception('Không thể lưu file lên server');
+        }
+
+        return 'uploads/' . $subfolder . '/' . $fileName;
+    }
+
+    // ================== CLOUDINARY (production) ==================
+
+    private static function saveToCloudinary(array $file, string $subfolder, array $credentials): string
+    {
+        [$cloudName, $apiKey, $apiSecret] = $credentials;
 
         $timestamp = time();
         $folder    = 'rtv/' . $subfolder;
@@ -59,71 +113,7 @@ class Upload
             throw new Exception($message);
         }
 
-        // Lưu thẳng URL đầy đủ vào DB, không cần ghép domain nữa
         return $result['secure_url'];
-    }
-
-    /**
-     * Xoá ảnh. Hỗ trợ cả 2 dạng để không phá ảnh cũ trong DB:
-     * - URL Cloudinary đầy đủ (ảnh upload SAU khi đổi sang Cloudinary)
-     * - Đường dẫn tương đối kiểu cũ "uploads/sanpham/abc.jpg" (ảnh có từ TRƯỚC
-     *   khi đổi, vẫn còn nằm trên đĩa local — giữ lại logic xoá cũ cho chúng)
-     */
-    public static function deleteFile(string $imagePathOrUrl): void
-    {
-        if (self::isAbsoluteUrl($imagePathOrUrl)) {
-            self::deleteFromCloudinary($imagePathOrUrl);
-            return;
-        }
-
-        $fullPath = __DIR__ . '/../' . $imagePathOrUrl;
-        if (is_file($fullPath)) {
-            @unlink($fullPath);
-        }
-    }
-
-    private static function validateFile(array $file): void
-    {
-        if ($file['error'] !== UPLOAD_ERR_OK) {
-            throw new Exception('Lỗi khi upload file (mã lỗi: ' . $file['error'] . ')');
-        }
-
-        if ($file['size'] > self::MAX_SIZE_BYTES) {
-            throw new Exception('Ảnh "' . $file['name'] . '" vượt quá 5MB');
-        }
-
-        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
-        if (!in_array($ext, self::ALLOWED_EXT, true)) {
-            throw new Exception('Định dạng ảnh không hợp lệ, chỉ nhận: ' . implode(', ', self::ALLOWED_EXT));
-        }
-
-        // Kiểm tra thật sự là ảnh (không chỉ dựa vào đuôi file, tránh upload file giả mạo)
-        $imageInfo = @getimagesize($file['tmp_name']);
-        if ($imageInfo === false) {
-            throw new Exception('File "' . $file['name'] . '" không phải là ảnh hợp lệ');
-        }
-    }
-
-    /**
-     * @return array{0:string,1:string,2:string} [cloudName, apiKey, apiSecret]
-     * @throws Exception nếu thiếu cấu hình
-     */
-    private static function getCredentials(): array
-    {
-        $cloudName = env('CLOUDINARY_CLOUD_NAME', '');
-        $apiKey    = env('CLOUDINARY_API_KEY', '');
-        $apiSecret = env('CLOUDINARY_API_SECRET', '');
-
-        if ($cloudName === '' || $apiKey === '' || $apiSecret === '') {
-            throw new Exception('Chưa cấu hình Cloudinary (thiếu CLOUDINARY_CLOUD_NAME / CLOUDINARY_API_KEY / CLOUDINARY_API_SECRET trong .env)');
-        }
-
-        return [$cloudName, $apiKey, $apiSecret];
-    }
-
-    private static function isAbsoluteUrl(string $value): bool
-    {
-        return str_starts_with($value, 'http://') || str_starts_with($value, 'https://');
     }
 
     private static function deleteFromCloudinary(string $url): void
@@ -133,11 +123,12 @@ class Upload
             return; // không parse được public_id thì bỏ qua, không chặn luồng chính
         }
 
-        try {
-            [$cloudName, $apiKey, $apiSecret] = self::getCredentials();
-        } catch (Exception $e) {
-            return; // thiếu config thì thôi, xoá ảnh không phải luồng bắt buộc phải thành công
+        $credentials = self::getCredentials();
+        if ($credentials === null) {
+            return; // môi trường hiện tại không cấu hình Cloudinary, không xoá được
         }
+
+        [$cloudName, $apiKey, $apiSecret] = $credentials;
 
         $timestamp = time();
         $signature = self::generateSignature([
@@ -197,5 +188,53 @@ class Upload
         }
 
         return sha1(implode('&', $pairs) . $apiSecret);
+    }
+
+    // ================== DÙNG CHUNG ==================
+
+    private static function validateFile(array $file): void
+    {
+        if ($file['error'] !== UPLOAD_ERR_OK) {
+            throw new Exception('Lỗi khi upload file (mã lỗi: ' . $file['error'] . ')');
+        }
+
+        if ($file['size'] > self::MAX_SIZE_BYTES) {
+            throw new Exception('Ảnh "' . $file['name'] . '" vượt quá 5MB');
+        }
+
+        $ext = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+        if (!in_array($ext, self::ALLOWED_EXT, true)) {
+            throw new Exception('Định dạng ảnh không hợp lệ, chỉ nhận: ' . implode(', ', self::ALLOWED_EXT));
+        }
+
+        // Kiểm tra thật sự là ảnh (không chỉ dựa vào đuôi file, tránh upload file giả mạo)
+        $imageInfo = @getimagesize($file['tmp_name']);
+        if ($imageInfo === false) {
+            throw new Exception('File "' . $file['name'] . '" không phải là ảnh hợp lệ');
+        }
+    }
+
+    /**
+     * Trả về [cloudName, apiKey, apiSecret] nếu có ĐỦ cả 3 biến CLOUDINARY_*
+     * trong .env, ngược lại trả về null (báo hiệu dùng local disk thay thế).
+     *
+     * @return array{0:string,1:string,2:string}|null
+     */
+    private static function getCredentials(): ?array
+    {
+        $cloudName = env('CLOUDINARY_CLOUD_NAME', '');
+        $apiKey    = env('CLOUDINARY_API_KEY', '');
+        $apiSecret = env('CLOUDINARY_API_SECRET', '');
+
+        if ($cloudName === '' || $apiKey === '' || $apiSecret === '') {
+            return null;
+        }
+
+        return [$cloudName, $apiKey, $apiSecret];
+    }
+
+    private static function isAbsoluteUrl(string $value): bool
+    {
+        return str_starts_with($value, 'http://') || str_starts_with($value, 'https://');
     }
 }
