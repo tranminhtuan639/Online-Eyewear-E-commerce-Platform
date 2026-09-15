@@ -37,7 +37,6 @@ try {
     foreach ($chiTiet as $item) {
         $sanPhamId = $item['sanpham_id'] ?? '';
         $soLuong   = (int)($item['so_luong'] ?? 0);
-        $donKinhId = $item['don_kinh_id'] ?? null;
 
         if ($sanPhamId === '' || $soLuong <= 0) {
             throw new Exception('Dữ liệu sản phẩm trong giỏ hàng không hợp lệ');
@@ -56,15 +55,6 @@ try {
             throw new Exception("Sản phẩm \"{$sanPham['ten']}\" chỉ còn {$sanPham['so_luong_ton']} trong kho");
         }
 
-        // Nếu có chọn đơn kính, kiểm tra đơn kính đó có đúng là của người đang đặt hàng không
-        if ($donKinhId) {
-            $dkStmt = $pdo->prepare('SELECT id FROM don_kinh WHERE id = :id AND nguoidung_id = :uid');
-            $dkStmt->execute(['id' => $donKinhId, 'uid' => $currentUser['id']]);
-            if (!$dkStmt->fetch()) {
-                throw new Exception('Đơn kính không hợp lệ');
-            }
-        }
-
         $giaBan = $sanPham['gia'];
         $tongTien += $giaBan * $soLuong;
 
@@ -76,7 +66,6 @@ try {
 
         $chiTietDaXuLy[] = [
             'sanpham_id'  => $sanPhamId,
-            'don_kinh_id' => $donKinhId,
             'so_luong'    => $soLuong,
             'gia_ban'     => $giaBan,
         ];
@@ -100,15 +89,14 @@ try {
     ]);
 
     $ctStmt = $pdo->prepare(
-        'INSERT INTO donhang_chitiet (id, donhang_id, sanpham_id, don_kinh_id, so_luong, gia_ban)
-         VALUES (:id, :donhang_id, :sanpham_id, :don_kinh_id, :so_luong, :gia_ban)'
+        'INSERT INTO donhang_chitiet (id, donhang_id, sanpham_id, so_luong, gia_ban)
+         VALUES (:id, :donhang_id, :sanpham_id, :so_luong, :gia_ban)'
     );
     foreach ($chiTietDaXuLy as $ct) {
         $ctStmt->execute([
             'id'          => Uuid::v4(),
             'donhang_id'  => $donHangId,
             'sanpham_id'  => $ct['sanpham_id'],
-            'don_kinh_id' => $ct['don_kinh_id'],
             'so_luong'    => $ct['so_luong'],
             'gia_ban'     => $ct['gia_ban'],
         ]);

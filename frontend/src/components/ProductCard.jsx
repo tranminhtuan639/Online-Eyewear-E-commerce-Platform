@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useCart } from '../context/CartContext'
 import { useAuth } from '../context/AuthContext'
@@ -17,48 +17,55 @@ export default function ProductCard({ product, onUnfavorited }) {
   const { addToCart } = useCart()
   const { user } = useAuth()
 
-  const [hovered, setHovered] =
-    useState(false)
+  const [hovered, setHovered] = useState(false)
 
   // Khởi tạo từ dữ liệu backend trả về (da_yeu_thich, luot_yeu_thich),
   // sau đó tự quản lý state riêng để bấm ♡ phản hồi ngay (optimistic update).
-  const [daYeuThich, setDaYeuThich] =
-    useState(Boolean(product.da_yeu_thich))
+  const [daYeuThich, setDaYeuThich] = useState(
+    Boolean(product.da_yeu_thich)
+  )
 
-  const [luotYeuThich, setLuotYeuThich] =
-    useState(Number(product.luot_yeu_thich || 0))
+  const [luotYeuThich, setLuotYeuThich] = useState(
+    Number(product.luot_yeu_thich || 0)
+  )
 
-  const [dangXuLyYeuThich, setDangXuLyYeuThich] =
-    useState(false)
+  const [dangXuLyYeuThich, setDangXuLyYeuThich] = useState(false)
 
-  const imageA =
-    getImageUrl(product.anh_a)
+  const imageA = getImageUrl(product.anh_a)
+  const imageB = getImageUrl(product.anh_b)
 
-  const imageB =
-    getImageUrl(product.anh_b)
+  // =========================================================
+  // PRELOAD ẢNH HOVER
+  // =========================================================
+  // Khi ProductCard xuất hiện trên trang, browser sẽ âm thầm
+  // tải ảnh B trước. Khi user hover thì ảnh đã nằm trong cache.
+  useEffect(() => {
+    if (!imageB || imageB === imageA) {
+      return
+    }
+
+    const preloadImage = new Image()
+    preloadImage.src = imageB
+  }, [imageA, imageB])
 
   const currentImage =
     hovered && imageB
       ? imageB
       : imageA
 
-  const gia =
-    Number(product.gia || 0)
+  const gia = Number(product.gia || 0)
 
-  const oldPrice =
-    product.gia_cu
-      ? Number(product.gia_cu)
-      : 0
+  const oldPrice = product.gia_cu
+    ? Number(product.gia_cu)
+    : 0
 
-  const hetHang =
-    product.so_luong_ton === 0
+  const hetHang = product.so_luong_ton === 0
 
   // Badge ưu tiên: hết hàng > badge do backend tính sẵn (sale/mới/bán chạy).
   // Backend chỉ trả tối đa 1 badge/sản phẩm theo thứ tự Sale% > Mới > Bán chạy.
-  const badge =
-    hetHang
-      ? { loai: 'het_hang', nhan: 'Hết hàng' }
-      : product.badge || null
+  const badge = hetHang
+    ? { loai: 'het_hang', nhan: 'Hết hàng' }
+    : product.badge || null
 
   const handleProductClick = () => {
     navigate(
@@ -94,25 +101,30 @@ export default function ProductCard({ product, onUnfavorited }) {
 
     // Cập nhật giao diện ngay (optimistic), rollback lại nếu API lỗi
     setDaYeuThich(!trangThaiTruoc)
+
     setLuotYeuThich(
       trangThaiTruoc
         ? Math.max(0, luotTruoc - 1)
         : luotTruoc + 1
     )
+
     setDangXuLyYeuThich(true)
 
     try {
       const res = await toggleYeuThich(product.id)
       const data = res.data?.data || {}
 
-      setDaYeuThich(Boolean(data.da_yeu_thich))
+      setDaYeuThich(
+        Boolean(data.da_yeu_thich)
+      )
+
       setLuotYeuThich(
         typeof data.luot_yeu_thich === 'number'
           ? data.luot_yeu_thich
           : luotTruoc
       )
 
-      // Vừa bỏ yêu thích -> báo lên component cha (vd: trang "Yêu thích")
+      // Vừa bỏ yêu thích -> báo lên component cha
       // để ẩn thẻ sản phẩm này khỏi danh sách ngay lập tức.
       if (!data.da_yeu_thich && onUnfavorited) {
         onUnfavorited(product.id)
@@ -141,36 +153,27 @@ export default function ProductCard({ product, onUnfavorited }) {
       <div
         className="product-image-wrap"
         onClick={handleProductClick}
-        onMouseEnter={() =>
-          setHovered(true)
-        }
-        onMouseLeave={() =>
-          setHovered(false)
-        }
+        onMouseEnter={() => setHovered(true)}
+        onMouseLeave={() => setHovered(false)}
       >
 
         {/* BADGE */}
 
         {badge && (
           <span
-            className={
-              `product-badge badge-${badge.loai}`
-            }
+            className={`product-badge badge-${badge.loai}`}
           >
             {badge.nhan}
           </span>
         )}
 
-
         {/* FAVORITE */}
 
         <button
           type="button"
-          className={
-            `favorite ${
-              daYeuThich ? 'active' : ''
-            }`
-          }
+          className={`favorite ${
+            daYeuThich ? 'active' : ''
+          }`}
           onClick={handleToggleFavorite}
           disabled={dangXuLyYeuThich}
           aria-label={
@@ -181,7 +184,6 @@ export default function ProductCard({ product, onUnfavorited }) {
         >
           {daYeuThich ? '♥' : '♡'}
         </button>
-
 
         {/* PRODUCT IMAGE */}
 
@@ -198,7 +200,6 @@ export default function ProductCard({ product, onUnfavorited }) {
 
       </div>
 
-
       {/* =========================
           PRODUCT INFO
       ========================= */}
@@ -213,7 +214,6 @@ export default function ProductCard({ product, onUnfavorited }) {
             'BÁNKÍNH.VN'}
         </span>
 
-
         {/* NAME */}
 
         <h3
@@ -221,7 +221,6 @@ export default function ProductCard({ product, onUnfavorited }) {
         >
           {product.ten}
         </h3>
-
 
         {/* PRICE */}
 
@@ -239,7 +238,6 @@ export default function ProductCard({ product, onUnfavorited }) {
 
         </div>
 
-
         {/* LƯỢT YÊU THÍCH */}
 
         {luotYeuThich > 0 && (
@@ -247,7 +245,6 @@ export default function ProductCard({ product, onUnfavorited }) {
             ♥ {luotYeuThich} lượt thích
           </span>
         )}
-
 
         {/* ADD CART */}
 

@@ -29,7 +29,7 @@ if (!$donHang) {
 Auth::requireOwnerOrRole($donHang['nguoidung_id']);
 
 $ctStmt = $pdo->prepare(
-    'SELECT ct.id, ct.sanpham_id, sp.ten AS ten_sanpham, ct.don_kinh_id, ct.so_luong, ct.gia_ban
+    'SELECT ct.id, ct.sanpham_id, sp.ten AS ten_sanpham, ct.so_luong, ct.gia_ban
      FROM donhang_chitiet ct
      JOIN sanpham sp ON sp.id = ct.sanpham_id
      WHERE ct.donhang_id = :id'

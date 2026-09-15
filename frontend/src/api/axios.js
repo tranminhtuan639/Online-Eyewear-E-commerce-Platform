@@ -43,14 +43,19 @@ export function getAuthToken() {
 }
 
 /**
- * Ghép đường dẫn ảnh tương đối (backend trả về vd: "uploads/sanpham/abc.jpg")
- * thành URL dùng được với <img>.
- * - Dev: đi qua proxy "/uploads" trong vite.config.js.
- * - Production (khác domain): dùng thẳng API_BASE_URL để trỏ về Railway.
+ * Chuẩn hoá đường dẫn ảnh backend trả về thành URL dùng được với <img>.
+ *
+ * Ảnh giờ có 2 dạng tồn tại song song trong DB:
+ * - URL tuyệt đối (ảnh mới, lưu trên Cloudinary từ sau khi đổi hạ tầng):
+ *   "https://res.cloudinary.com/xxx/image/upload/.../abc.jpg" -> dùng thẳng,
+ *   không ghép gì thêm.
+ * - Path tương đối (ảnh cũ, còn lưu local trên server từ trước khi đổi):
+ *   "uploads/sanpham/abc.jpg" -> vẫn ghép API_BASE_URL như cũ để trỏ về Railway.
  */
-export function getImageUrl(relativePath) {
-  if (!relativePath) return null
-  return `${API_BASE_URL}/${relativePath}`
+export function getImageUrl(path) {
+  if (!path) return null
+  if (/^https?:\/\//i.test(path)) return path
+  return `${API_BASE_URL}/${path}`
 }
 
 export default api
